@@ -4,10 +4,7 @@ import "../styles/App.css";
 function About() {
   return (
     <div className='container mx-auto'>
-      <section
-        id='about'
-        className='snap-center h-screen'
-      >
+      
         <h1>About</h1>
         <div id='elevator-pitch'>
           <p>elevator pitch</p>
@@ -20,7 +17,6 @@ function About() {
             <p>social icons</p>
           </div>
         </div>
-      </section>
     </div>
   );
 }

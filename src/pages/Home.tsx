@@ -1,24 +1,24 @@
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import "../styles/App.css";
 
 function Home() {
   return (
     <div className='container mx-auto'>
-      <section
-        id='home'
-        className='snap-center h-screen'
-      >
-        <h1>Home</h1>
-        <div id='greeting'>
-          <p>greeting</p>
-        </div>
-        <div id='portrait'>
-          <p>portrait</p>
-        </div>
-        <div id='intro'>
-          <p>intro</p>
-        </div>
-      </section>
+      <div id='nav'>
+        <Link to='/about'>About</Link>
+        <Link to='/projects'>Projects</Link>
+        <Link to='/contact'>Contact</Link>
+      </div>
+      <h1>Home</h1>
+      <div id='greeting'>
+        <p>greeting</p>
+      </div>
+      <div id='portrait'>
+        <p>portrait</p>
+      </div>
+      <div id='intro'>
+        <p>intro</p>
+      </div>
     </div>
   );
 }
