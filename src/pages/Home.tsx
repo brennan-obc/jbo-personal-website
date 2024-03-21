@@ -3,15 +3,21 @@ import "../styles/App.css";
 
 function Home() {
   return (
-    <div className='home'>
-      <h1>Welcome to My Zone!</h1>
-      {/* <p>Who let me get here?</p> */}
-      <p>This is a brief introduction to who I am and what I do.</p>
-      <div className='links'>
-        <Link to='about'>About Me</Link>
-        <Link to='projects'>Projects</Link>
-        <Link to='resume'>Resume</Link>
-        <Link to='contact'>Contact</Link>
+    <div className='container mx-auto'>
+      <div id='nav'>
+        <Link to='/about'>About</Link>
+        <Link to='/projects'>Projects</Link>
+        <Link to='/contact'>Contact</Link>
+      </div>
+      <h1>Home</h1>
+      <div id='greeting'>
+        <p>greeting</p>
+      </div>
+      <div id='portrait'>
+        <p>portrait</p>
+      </div>
+      <div id='intro'>
+        <p>intro</p>
       </div>
     </div>
   );
