@@ -1,11 +1,9 @@
 import { Link } from "react-router-dom";
-import Swarm from "../components/Swarm";
 import "../styles/App.css";
 
 function Home() {
   return (
-    <div className='container'>
-      <Swarm />
+    <div className='container min-h-screen min-w-max'>
       <div className='container mx-auto'>
         <div id='nav'>
           <Link to='/about'>About</Link>

@@ -1,6 +1,7 @@
 /* eslint-disable prefer-const */
 import React, { useEffect } from "react";
 import styles from "../styles/Swarm.module.scss";
+console.log(styles);
 
 interface Dot {
   id: number;
@@ -78,9 +79,10 @@ const Swarm: React.FC = () => {
 
     dots.forEach((dot) => {
       const dotEl = document.createElement("div");
-      dotEl.classList.add(styles.dot);
+      dotEl.classList.add(styles["swarm-container__dot"]);
       dotEl.style.left = `${dot.x}px`;
       dotEl.style.top = `${dot.y}px`;
+      dotEl.style.width = `${dot.size}px`; 
       dotEl.style.height = `${dot.size}px`;
       container?.appendChild(dotEl);
 
@@ -116,7 +118,7 @@ const Swarm: React.FC = () => {
     });
   }, []);
 
-  return <div className={styles.swarmContainer}></div>;
+  return <div className={styles["swarm-container"]}>TEST</div>;
 };
 
 export default Swarm;
