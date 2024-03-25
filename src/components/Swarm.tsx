@@ -56,6 +56,9 @@ function cohesion(dot: Dot, neighbors: Dot[]): { ax: number; ay: number } {
 function separation(dot: Dot, neighbors: Dot[]): { ax: number; ay: number } {
   let moveX = 0;
   let moveY = 0;
+  let xMult = 0.2;
+  let yMult = 0.2;
+
   neighbors.forEach((neighbor) => {
     let distance = Math.sqrt(
       Math.pow(neighbor.x - dot.x, 2) + Math.pow(neighbor.y - dot.y, 2)
@@ -66,14 +69,18 @@ function separation(dot: Dot, neighbors: Dot[]): { ax: number; ay: number } {
     }
   });
 
-  return { ax: moveX * 0.1, ay: moveY * 0.1 };
+  return { ax: moveX * xMult, ay: moveY * yMult };
 }
 
 const Swarm: React.FC = () => {
+  const speedFactor = 0.75;
+
+  let containerWidth = 0;
+  let containerHeight = 0;
   useEffect(() => {
     const container = document.querySelector(`.${styles["swarm-container"]}`);
-    const containerWidth = container?.clientWidth ?? 0;
-    const containerHeight = container?.clientHeight ?? 0;
+    containerWidth = container?.clientWidth ?? 0;
+    containerHeight = container?.clientHeight ?? 0;
 
     const dots = createDots(1000, containerWidth, containerHeight);
 
@@ -82,7 +89,7 @@ const Swarm: React.FC = () => {
       dotEl.classList.add(styles["swarm-container__dot"]);
       dotEl.style.left = `${dot.x}px`;
       dotEl.style.top = `${dot.y}px`;
-      dotEl.style.width = `${dot.size}px`; 
+      dotEl.style.width = `${dot.size}px`;
       dotEl.style.height = `${dot.size}px`;
       container?.appendChild(dotEl);
 
@@ -99,9 +106,24 @@ const Swarm: React.FC = () => {
         dot.vx += align.ax + cohes.ax + separ.ax;
         dot.vy += align.ay + cohes.ay + separ.ay;
 
+        // introduce randomness to motion
+        dot.vx += (Math.random() - 0.5) * 0.05;
+        dot.vy += (Math.random() - 0.5) * 0.05;
+
+        // adjust horizontal velocity
+        if (dot.x <= 0 || dot.x >= containerWidth - dot.size) {
+          dot.vx = -dot.vx;
+          dot.vy += (Math.random() - 0.5) * 0.1;
+        }
+        // adjust vertical velocity
+        if (dot.y <= 0 || dot.y >= containerHeight - dot.size) {
+          dot.vy = -dot.vy;
+          dot.vx += (Math.random() - 0.5) * 0.1;
+        }
+
         // update position based on velocity
-        dot.x += dot.vx;
-        dot.y += dot.vy;
+        dot.x += dot.vx * speedFactor;
+        dot.y += dot.vy * speedFactor;
 
         // ensure dots stay within container
         dot.x = Math.max(0, Math.min(dot.x, containerWidth - dot.size));
@@ -116,6 +138,24 @@ const Swarm: React.FC = () => {
 
       requestAnimationFrame(animate);
     });
+  }, []);
+
+  // handle resize
+  useEffect(() => {
+    const handleResize = () => {
+      // update dimensions
+      const container = document.querySelector(`.${styles["swarm-container"]}`);
+      containerWidth = container?.clientWidth ?? 0;
+      containerHeight = container?.clientHeight ?? 0;
+      //• optional: adjust dot position
+    };
+
+    // attach resize event listener
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   return <div className={styles["swarm-container"]}>TEST</div>;
