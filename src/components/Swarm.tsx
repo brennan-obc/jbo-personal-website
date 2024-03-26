@@ -12,6 +12,10 @@ interface Dot {
   size: number;
 }
 
+let frameCount = 0;
+const NEIGHBOR_RADIUS = 250;
+const MIN_VELOCITY = 0.4;
+
 const createDots = (
   count: number,
   containerWidth: number,
@@ -72,6 +76,47 @@ function separation(dot: Dot, neighbors: Dot[]): { ax: number; ay: number } {
   return { ax: moveX * xMult, ay: moveY * yMult };
 }
 
+function findNeighbors(dot: Dot, dots: Dot[]): Dot[] {
+  return dots.filter((otherDot) => {
+    if (dot.id === otherDot.id) return false; // skip self
+    const distance = Math.sqrt(
+      (dot.x - otherDot.x) ** 2 + (dot.y - otherDot.y) ** 2
+    );
+    return distance <= NEIGHBOR_RADIUS;
+  });
+}
+
+function normalizeVelocity(dot: Dot) {
+  const magnitude = Math.sqrt(dot.vx ** 2 + dot.vy ** 2);
+  if (magnitude < MIN_VELOCITY) {
+    const scale = MIN_VELOCITY / magnitude;
+    dot.vx *= scale;
+    dot.vy *= scale;
+  }
+}
+
+function applyRandomness(dot: Dot) {
+  const baseRandomness = 0.2;
+  const currentSpeed = Math.sqrt(dot.vx ** 2 + dot.vy ** 2);
+
+  // apply more randomness to slower dots
+  const scaledRandomness =
+    currentSpeed < MIN_VELOCITY ? baseRandomness * 2 : baseRandomness;
+
+  dot.vx += (Math.random() - 0.5) * scaledRandomness;
+  dot.vy += (Math.random() - 0.5) * scaledRandomness;
+}
+
+// apply periodic perturbances to prevent swarm from settling
+const preventEquilibrium = (dot: Dot, frameCount: number) => {
+  if (frameCount % 1000 === 0) {
+    const angle = Math.random() * 2 * Math.PI;
+    const pertubationSpeed = 2;
+    dot.vx = Math.cos(angle) * pertubationSpeed;
+    dot.vy = Math.sin(angle) * pertubationSpeed;
+  }
+};
+
 const Swarm: React.FC = () => {
   const speedFactor = 0.75;
 
@@ -95,8 +140,10 @@ const Swarm: React.FC = () => {
 
       // animation logic
       const animate = () => {
+        frameCount++;
+
         // find neighbors
-        let neighbors = dots.filter((d) => d.id !== dot.id);
+        let neighbors = findNeighbors(dot, dots);
 
         let align = alignment(dot, neighbors);
         let cohes = cohesion(dot, neighbors);
@@ -107,8 +154,7 @@ const Swarm: React.FC = () => {
         dot.vy += align.ay + cohes.ay + separ.ay;
 
         // introduce randomness to motion
-        dot.vx += (Math.random() - 0.5) * 0.05;
-        dot.vy += (Math.random() - 0.5) * 0.05;
+        applyRandomness(dot);
 
         // adjust horizontal velocity
         if (dot.x <= 0 || dot.x >= containerWidth - dot.size) {
@@ -120,6 +166,9 @@ const Swarm: React.FC = () => {
           dot.vy = -dot.vy;
           dot.vx += (Math.random() - 0.5) * 0.1;
         }
+
+        normalizeVelocity(dot);
+        preventEquilibrium(dot, frameCount);
 
         // update position based on velocity
         dot.x += dot.vx * speedFactor;
