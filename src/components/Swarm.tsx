@@ -13,8 +13,8 @@ interface Dot {
 }
 
 let frameCount = 0;
-const NEIGHBOR_RADIUS = 250;
-const MIN_VELOCITY = 0.4;
+const NEIGHBOR_RADIUS = 200;
+const MIN_VELOCITY = 0.2;
 
 const createDots = (
   count: number,
