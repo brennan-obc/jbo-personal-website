@@ -13,6 +13,7 @@ interface Dot {
 }
 
 let frameCount = 0;
+const SWARM_BOUNDARY_MULT = 1.3;
 const NEIGHBOR_RADIUS = 200;
 const MIN_VELOCITY = 0.2;
 
@@ -120,12 +121,12 @@ const preventEquilibrium = (dot: Dot, frameCount: number) => {
 const Swarm: React.FC = () => {
   const speedFactor = 0.75;
 
-  let containerWidth = 0;
-  let containerHeight = 0;
+  let containerWidth = window.innerWidth * SWARM_BOUNDARY_MULT; // let containerWidth = 0;
+  let containerHeight = window.innerHeight * SWARM_BOUNDARY_MULT; // let containerHeight = 0;
   useEffect(() => {
     const container = document.querySelector(`.${styles["swarm-container"]}`);
-    containerWidth = container?.clientWidth ?? 0;
-    containerHeight = container?.clientHeight ?? 0;
+    // containerWidth = container?.clientWidth ?? 0;
+    //containerHeight = container?.clientHeight ?? 0;
 
     const dots = createDots(1000, containerWidth, containerHeight);
 
@@ -157,12 +158,18 @@ const Swarm: React.FC = () => {
         applyRandomness(dot);
 
         // adjust horizontal velocity
-        if (dot.x <= 0 || dot.x >= containerWidth - dot.size) {
+        if (
+          dot.x <= 0 ||
+          dot.x >= containerWidth - dot.size * SWARM_BOUNDARY_MULT
+        ) {
           dot.vx = -dot.vx;
           dot.vy += (Math.random() - 0.5) * 0.1;
         }
         // adjust vertical velocity
-        if (dot.y <= 0 || dot.y >= containerHeight - dot.size) {
+        if (
+          dot.y <= 0 ||
+          dot.y >= containerHeight - dot.size * SWARM_BOUNDARY_MULT
+        ) {
           dot.vy = -dot.vy;
           dot.vx += (Math.random() - 0.5) * 0.1;
         }
