@@ -10,6 +10,9 @@ interface Dot {
   vx: number; // velocity
   vy: number;
   size: number;
+  lastX: number;
+  lastY: number;
+  moveCount: number;
 }
 
 let frameCount = 0;
@@ -22,14 +25,21 @@ const createDots = (
   containerWidth: number,
   containerHeight: number
 ): Dot[] => {
-  return Array.from({ length: count }, (_, index) => ({
-    id: index,
-    x: Math.random() * containerWidth,
-    y: Math.random() * containerHeight,
-    vx: Math.random() * 2 - 1, // velocity range [-1, 1]
-    vy: Math.random() * 2 - 1,
-    size: Math.random() * 2 + 1, // 1-3px diameter
-  }));
+  return Array.from({ length: count }, (_, index) => {
+    const x = Math.random() * containerWidth;
+    const y = Math.random() * containerHeight;
+    return {
+      id: index,
+      x: Math.random() * containerWidth,
+      y: Math.random() * containerHeight,
+      vx: Math.random() * 2 - 1, // velocity range [-1, 1]
+      vy: Math.random() * 2 - 1,
+      size: Math.random() * 1 + 0.5, // 0.5px — 1.5px
+      lastX: x,
+      lastY: y,
+      moveCount: 0,
+    };
+  });
 };
 
 function alignment(dot: Dot, neighbors: Dot[]): { ax: number; ay: number } {
@@ -121,13 +131,10 @@ const preventEquilibrium = (dot: Dot, frameCount: number) => {
 const Swarm: React.FC = () => {
   const speedFactor = 0.75;
 
-  let containerWidth = window.innerWidth * SWARM_BOUNDARY_MULT; // let containerWidth = 0;
-  let containerHeight = window.innerHeight * SWARM_BOUNDARY_MULT; // let containerHeight = 0;
+  let containerWidth = window.innerWidth * SWARM_BOUNDARY_MULT;
+  let containerHeight = window.innerHeight * SWARM_BOUNDARY_MULT;
   useEffect(() => {
     const container = document.querySelector(`.${styles["swarm-container"]}`);
-    // containerWidth = container?.clientWidth ?? 0;
-    //containerHeight = container?.clientHeight ?? 0;
-
     const dots = createDots(1000, containerWidth, containerHeight);
 
     dots.forEach((dot) => {
