@@ -1,0 +1,29 @@
+:root {
+  // general (dark & light modes)
+  --color-dark-main: #000000;
+  --color-dark-accent: #161618;
+  --color-mid-accent: #212124;
+  --color-light-accent: #818181;
+  --color-light-main: #ffffff;
+
+  // UI (dark & light modes)
+  --color-ui-warning: #ff3c36;
+  --color-ui-alert: #ffc500;
+  --color-ui-success: #00c41e;
+  --color-ui-accent-shadow: #333436;
+  --color-ui-accent-highlight: #353738;
+
+  // swarm dots (dark)
+  --color-dark-dot-1: #777777;
+  --color-dark-dot-2: #666666;
+  --color-dark-dot-3: #555555;
+  --color-dark-dot-4: #444444;
+  --color-dark-dot-5: #333333;
+
+  // swarm dots (light)
+  --color-light-dot-1: #888888;
+  --color-light-dot-2: #999999;
+  --color-light-dot-3: #aaaaaa;
+  --color-light-dot-4: #bbbbbb;
+  --color-light-dot-5: #cccccc;
+}
