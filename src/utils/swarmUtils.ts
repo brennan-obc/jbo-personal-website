@@ -8,8 +8,26 @@ export interface Dot {
   size: number;
 }
 
-const NEIGHBOR_RADIUS = 200;
-const MIN_VELOCITY = 0.2;
+const NEIGHBOR_RADIUS = 375;
+const MIN_VELOCITY = 0.1;
+
+export const getDotColors = () => [
+  getComputedStyle(document.documentElement)
+    .getPropertyValue("--color-light-dot-1")
+    .trim(),
+  getComputedStyle(document.documentElement)
+    .getPropertyValue("--color-light-dot-2")
+    .trim(),
+  getComputedStyle(document.documentElement)
+    .getPropertyValue("--color-light-dot-3")
+    .trim(),
+  getComputedStyle(document.documentElement)
+    .getPropertyValue("--color-light-dot-4")
+    .trim(),
+  getComputedStyle(document.documentElement)
+    .getPropertyValue("--color-light-dot-5")
+    .trim(),
+];
 
 // createDots
 export const createDots = (

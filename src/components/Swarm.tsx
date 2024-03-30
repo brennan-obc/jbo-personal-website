@@ -10,11 +10,13 @@ import {
   findNeighbors,
   normalizeVelocity,
   applyRandomness,
+  getDotColors,
 } from "../utils/swarmUtils";
 
 const Swarm: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const speedFactor = 0.75;
+  const colors = getDotColors();
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -24,8 +26,8 @@ const Swarm: React.FC = () => {
     if (!context) return;
 
     // set canvas size
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth * 1.25;
+    canvas.height = window.innerHeight * 1.25;
 
     const dots = createDots(1000, canvas.width, canvas.height);
 
@@ -53,7 +55,10 @@ const Swarm: React.FC = () => {
         dot.x += dot.vx * speedFactor;
         dot.y += dot.vy * speedFactor;
 
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
         // use drawDot to render the dot on the canvas
+        context.fillStyle = randomColor;
         context.beginPath();
         context.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2);
         context.fill();
@@ -65,7 +70,21 @@ const Swarm: React.FC = () => {
     animate();
   }, []);
 
-  //? handle resize
+  useEffect(() => {
+    const handleResize = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const context = canvas.getContext("2d");
+      if (!context) return;
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  });
 
   return (
     <div className={styles["swarm-container"]}>
