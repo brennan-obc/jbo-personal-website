@@ -9,7 +9,8 @@ import {
   separation,
   findNeighbors,
   normalizeVelocity,
-  applyRandomness,
+  // applyRandomness,
+  applyDirectionChange,
   getDotColors,
 } from "../utils/swarmUtils";
 
@@ -17,6 +18,19 @@ const Swarm: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const speedFactor = 0.75;
   const colors = getDotColors();
+
+  // create "hive" (swarm origin)
+  const drawHive = (
+    context: CanvasRenderingContext2D,
+    hiveX: number,
+    hiveY: number
+  ) => {
+    const hiveSize = 30; // ToDo: adjust
+    context.fillStyle = "#A088EE";
+    context.beginPath();
+    context.arc(hiveX, hiveY, hiveSize, 0, Math.PI * 2);
+    context.fill();
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -35,6 +49,11 @@ const Swarm: React.FC = () => {
     const animate = () => {
       context.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
 
+      // draw hive
+      const hiveX = canvas.width * 0.875; // 87.5% from left
+      const hiveY = canvas.height * 0.125; // 12.5% from top
+      drawHive(context, hiveX, hiveY);
+
       dots.forEach((dot) => {
         let neighbors = findNeighbors(dot, dots);
 
@@ -45,7 +64,8 @@ const Swarm: React.FC = () => {
         dot.vx += alignmentX + cohesionX + separationX;
         dot.vy += alignmentY + cohesionY + separationY;
 
-        applyRandomness(dot);
+        // applyRandomness(dot);
+        applyDirectionChange(dot);
         normalizeVelocity(dot);
 
         // ensure dots wrap around edges

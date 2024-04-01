@@ -29,7 +29,7 @@ export const getDotColors = () => [
     .trim(),
 ];
 
-// createDots
+// add dots to canvas
 export const createDots = (
   count: number,
   canvasWidth: number,
@@ -47,7 +47,7 @@ export const createDots = (
   });
 };
 
-// alignment
+// control alignment
 export const alignment = (
   dot: Dot,
   neighbors: Dot[]
@@ -64,7 +64,7 @@ export const alignment = (
   return { ax: (averageVx - dot.vx) * 0.05, ay: (averageVy - dot.vy) * 0.05 };
 };
 
-// cohesion
+// control cohesion
 export const cohesion = (
   dot: Dot,
   neighbors: Dot[]
@@ -81,7 +81,7 @@ export const cohesion = (
   return { ax: (averageX - dot.x) * 0.01, ay: (averageY - dot.y) * 0.01 };
 };
 
-// separation
+// control separation
 export const separation = (
   dot: Dot,
   neighbors: Dot[]
@@ -104,7 +104,7 @@ export const separation = (
   return { ax: moveX * xMult, ay: moveY * yMult };
 };
 
-// findNeighbors
+// determine which dots are neighbors
 export const findNeighbors = (dot: Dot, dots: Dot[]): Dot[] => {
   return dots.filter((otherDot) => {
     if (dot.id === otherDot.id) return false; // skip self
@@ -115,7 +115,7 @@ export const findNeighbors = (dot: Dot, dots: Dot[]): Dot[] => {
   });
 };
 
-// normalizeVelocity
+// normalize velocity of dots
 export const normalizeVelocity = (dot: Dot) => {
   const magnitude = Math.sqrt(dot.vx ** 2 + dot.vy ** 2);
   if (magnitude < MIN_VELOCITY) {
@@ -125,15 +125,40 @@ export const normalizeVelocity = (dot: Dot) => {
   }
 };
 
-// applyRandomness
-export const applyRandomness = (dot: Dot) => {
-  const baseRandomness = 0.2;
-  const currentSpeed = Math.sqrt(dot.vx ** 2 + dot.vy ** 2);
+// // subtly randomize parameters
+// export const applyRandomness = (dot: Dot) => {
+//   const baseRandomness = 0.2;
+//   const currentSpeed = Math.sqrt(dot.vx ** 2 + dot.vy ** 2);
+//
+//   // apply more randomness to slower dots
+//   const scaledRandomness =
+//     currentSpeed < MIN_VELOCITY ? baseRandomness * 2 : baseRandomness;
+//
+//   dot.vx += (Math.random() - 0.5) * scaledRandomness;
+//   dot.vy += (Math.random() - 0.5) * scaledRandomness;
+// };
 
-  // apply more randomness to slower dots
-  const scaledRandomness =
-    currentSpeed < MIN_VELOCITY ? baseRandomness * 2 : baseRandomness;
+// increase frequency & impact of direction changes
+export const applyDirectionChange = (dot: Dot) => {
+  // define how often direction should change
+  const directionChangeProbability = 0.1;
 
-  dot.vx += (Math.random() - 0.5) * scaledRandomness;
-  dot.vy += (Math.random() - 0.5) * scaledRandomness;
+  // randomly decide whether to change direction
+  if (Math.random() < directionChangeProbability) {
+    // define range of direction change
+    const maxDirectionChange = Math.PI / 4; // 45 degrees in radians
+
+    // calculate current angle of movement
+    let currentAngle = Math.atan2(dot.vy, dot.vx);
+
+    // apply random change to angle
+    currentAngle += (Math.random() - 0.5) * 2 * maxDirectionChange;
+
+    // define speed of dot to maintain current speed
+    const speed = Math.sqrt(dot.vx ** 2 + dot.vy ** 2);
+
+    // update velocity based on new angle
+    dot.vx = Math.cos(currentAngle) * speed;
+    dot.vy = Math.sin(currentAngle) * speed;
+  }
 };
