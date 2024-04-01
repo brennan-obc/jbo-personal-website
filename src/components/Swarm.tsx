@@ -1,6 +1,7 @@
 /* eslint-disable prefer-const */
 import React, { useRef, useEffect } from "react";
 import styles from "../styles/Swarm.module.scss";
+import "../styles/variables.scss";
 
 import {
   createDots,
@@ -16,7 +17,7 @@ import {
 
 const Swarm: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const speedFactor = 0.75;
+  const speedFactor = 0.05; // ToDo: slowed for development; increase speed
   const colors = getDotColors();
 
   // create "hive" (swarm origin)
@@ -26,7 +27,10 @@ const Swarm: React.FC = () => {
     hiveY: number
   ) => {
     const hiveSize = 30; // ToDo: adjust
-    context.fillStyle = "#A088EE";
+    const hiveColor = getComputedStyle(document.documentElement)
+      .getPropertyValue("--color-light-accent")
+      .trim();
+    context.fillStyle = hiveColor;
     context.beginPath();
     context.arc(hiveX, hiveY, hiveSize, 0, Math.PI * 2);
     context.fill();
@@ -43,7 +47,10 @@ const Swarm: React.FC = () => {
     canvas.width = window.innerWidth * 1.25;
     canvas.height = window.innerHeight * 1.25;
 
-    const dots = createDots(1000, canvas.width, canvas.height);
+    const hiveX = canvas.width * 0.875;
+    const hiveY = canvas.height * 0.125;
+
+    const dots = createDots(1000, hiveX, hiveY);
 
     // animation logic
     const animate = () => {

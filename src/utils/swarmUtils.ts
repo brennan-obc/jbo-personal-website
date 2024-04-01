@@ -32,16 +32,31 @@ export const getDotColors = () => [
 // add dots to canvas
 export const createDots = (
   count: number,
-  canvasWidth: number,
-  canvasHeight: number
+  hiveX: number,
+  hiveY: number
 ): Dot[] => {
-  return Array.from({ length: count }, (_, index) => {
+  return Array.from({ length: count }, () => {
+    // adjust initial position slightly
+    const originRadius = 2.5; // 5px hive exit
+    const angle = Math.random() * 2 * Math.PI;
+    const radius = Math.random() * originRadius;
+    const initialX = hiveX + radius * Math.cos(angle);
+    const initialY = hiveY + radius * Math.sin(angle);
+
+    // ensure slightly varied SW exit direction
+    const baseDirectionRadians = Math.PI * 1.25; // 225° / SW
+    const variation = (Math.PI / 180) * (Math.random() * 10 - 5); // ± 5° variation
+
+    const velocityMagnitude = 0.05; // ToDo: slowed for development; increase speed
+    const vx = Math.cos(baseDirectionRadians + variation) * velocityMagnitude;
+    const vy = Math.sin(baseDirectionRadians + variation) * velocityMagnitude;
+
     return {
-      id: index,
-      x: Math.random() * canvasWidth,
-      y: Math.random() * canvasHeight,
-      vx: Math.random() * 2 - 1, // velocity range [-1, 1]
-      vy: Math.random() * 2 - 1,
+      id: Math.random(),
+      x: initialX,
+      y: initialY,
+      vx: vx,
+      vy: vy,
       size: Math.random() * 1 + 0.5, // 0.5px — 1.5px
     };
   });
