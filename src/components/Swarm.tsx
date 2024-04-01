@@ -1,227 +1,116 @@
 /* eslint-disable prefer-const */
-import React, { useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import styles from "../styles/Swarm.module.scss";
-console.log(styles);
 
-interface Dot {
-  id: number;
-  x: number; // position
-  y: number;
-  vx: number; // velocity
-  vy: number;
-  size: number;
-  lastX: number;
-  lastY: number;
-  moveCount: number;
-}
-
-let frameCount = 0;
-const SWARM_BOUNDARY_MULT = 1.3;
-const NEIGHBOR_RADIUS = 200;
-const MIN_VELOCITY = 0.2;
-
-const createDots = (
-  count: number,
-  containerWidth: number,
-  containerHeight: number
-): Dot[] => {
-  return Array.from({ length: count }, (_, index) => {
-    const x = Math.random() * containerWidth;
-    const y = Math.random() * containerHeight;
-    return {
-      id: index,
-      x: Math.random() * containerWidth,
-      y: Math.random() * containerHeight,
-      vx: Math.random() * 2 - 1, // velocity range [-1, 1]
-      vy: Math.random() * 2 - 1,
-      size: Math.random() * 1 + 0.5, // 0.5px — 1.5px
-      lastX: x,
-      lastY: y,
-      moveCount: 0,
-    };
-  });
-};
-
-function alignment(dot: Dot, neighbors: Dot[]): { ax: number; ay: number } {
-  let averageVx = 0;
-  let averageVy = 0;
-  neighbors.forEach((neighbor) => {
-    averageVx += neighbor.vx;
-    averageVy += neighbor.vy;
-  });
-  averageVx /= neighbors.length;
-  averageVy /= neighbors.length;
-
-  return { ax: (averageVx - dot.vx) * 0.05, ay: (averageVy - dot.vy) * 0.05 };
-}
-
-function cohesion(dot: Dot, neighbors: Dot[]): { ax: number; ay: number } {
-  let averageX = 0;
-  let averageY = 0;
-  neighbors.forEach((neighbor) => {
-    averageX += neighbor.x;
-    averageY += neighbor.y;
-  });
-  averageX /= neighbors.length;
-  averageY /= neighbors.length;
-
-  return { ax: (averageX - dot.x) * 0.01, ay: (averageY - dot.y) * 0.01 };
-}
-
-function separation(dot: Dot, neighbors: Dot[]): { ax: number; ay: number } {
-  let moveX = 0;
-  let moveY = 0;
-  let xMult = 0.2;
-  let yMult = 0.2;
-
-  neighbors.forEach((neighbor) => {
-    let distance = Math.sqrt(
-      Math.pow(neighbor.x - dot.x, 2) + Math.pow(neighbor.y - dot.y, 2)
-    );
-    if (distance < 20) {
-      moveX += dot.x - neighbor.x;
-      moveY += dot.y - neighbor.y;
-    }
-  });
-
-  return { ax: moveX * xMult, ay: moveY * yMult };
-}
-
-function findNeighbors(dot: Dot, dots: Dot[]): Dot[] {
-  return dots.filter((otherDot) => {
-    if (dot.id === otherDot.id) return false; // skip self
-    const distance = Math.sqrt(
-      (dot.x - otherDot.x) ** 2 + (dot.y - otherDot.y) ** 2
-    );
-    return distance <= NEIGHBOR_RADIUS;
-  });
-}
-
-function normalizeVelocity(dot: Dot) {
-  const magnitude = Math.sqrt(dot.vx ** 2 + dot.vy ** 2);
-  if (magnitude < MIN_VELOCITY) {
-    const scale = MIN_VELOCITY / magnitude;
-    dot.vx *= scale;
-    dot.vy *= scale;
-  }
-}
-
-function applyRandomness(dot: Dot) {
-  const baseRandomness = 0.2;
-  const currentSpeed = Math.sqrt(dot.vx ** 2 + dot.vy ** 2);
-
-  // apply more randomness to slower dots
-  const scaledRandomness =
-    currentSpeed < MIN_VELOCITY ? baseRandomness * 2 : baseRandomness;
-
-  dot.vx += (Math.random() - 0.5) * scaledRandomness;
-  dot.vy += (Math.random() - 0.5) * scaledRandomness;
-}
-
-// apply periodic perturbances to prevent swarm from settling
-const preventEquilibrium = (dot: Dot, frameCount: number) => {
-  if (frameCount % 1000 === 0) {
-    const angle = Math.random() * 2 * Math.PI;
-    const pertubationSpeed = 2;
-    dot.vx = Math.cos(angle) * pertubationSpeed;
-    dot.vy = Math.sin(angle) * pertubationSpeed;
-  }
-};
+import {
+  createDots,
+  alignment,
+  cohesion,
+  separation,
+  findNeighbors,
+  normalizeVelocity,
+  // applyRandomness,
+  applyDirectionChange,
+  getDotColors,
+} from "../utils/swarmUtils";
 
 const Swarm: React.FC = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const speedFactor = 0.75;
+  const colors = getDotColors();
 
-  let containerWidth = window.innerWidth * SWARM_BOUNDARY_MULT;
-  let containerHeight = window.innerHeight * SWARM_BOUNDARY_MULT;
+  // create "hive" (swarm origin)
+  const drawHive = (
+    context: CanvasRenderingContext2D,
+    hiveX: number,
+    hiveY: number
+  ) => {
+    const hiveSize = 30; // ToDo: adjust
+    context.fillStyle = "#A088EE";
+    context.beginPath();
+    context.arc(hiveX, hiveY, hiveSize, 0, Math.PI * 2);
+    context.fill();
+  };
+
   useEffect(() => {
-    const container = document.querySelector(`.${styles["swarm-container"]}`);
-    const dots = createDots(1000, containerWidth, containerHeight);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
 
-    dots.forEach((dot) => {
-      const dotEl = document.createElement("div");
-      dotEl.classList.add(styles["swarm-container__dot"]);
-      dotEl.style.left = `${dot.x}px`;
-      dotEl.style.top = `${dot.y}px`;
-      dotEl.style.width = `${dot.size}px`;
-      dotEl.style.height = `${dot.size}px`;
-      container?.appendChild(dotEl);
+    const context = canvas.getContext("2d");
+    if (!context) return;
 
-      // animation logic
-      const animate = () => {
-        frameCount++;
+    // set canvas size
+    canvas.width = window.innerWidth * 1.25;
+    canvas.height = window.innerHeight * 1.25;
 
-        // find neighbors
+    const dots = createDots(1000, canvas.width, canvas.height);
+
+    // animation logic
+    const animate = () => {
+      context.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
+
+      // draw hive
+      const hiveX = canvas.width * 0.875; // 87.5% from left
+      const hiveY = canvas.height * 0.125; // 12.5% from top
+      drawHive(context, hiveX, hiveY);
+
+      dots.forEach((dot) => {
         let neighbors = findNeighbors(dot, dots);
 
-        let align = alignment(dot, neighbors);
-        let cohes = cohesion(dot, neighbors);
-        let separ = separation(dot, neighbors);
+        let { ax: alignmentX, ay: alignmentY } = alignment(dot, neighbors);
+        let { ax: cohesionX, ay: cohesionY } = cohesion(dot, neighbors);
+        let { ax: separationX, ay: separationY } = separation(dot, neighbors);
 
-        // update velocity based on Boids rules
-        dot.vx += align.ax + cohes.ax + separ.ax;
-        dot.vy += align.ay + cohes.ay + separ.ay;
+        dot.vx += alignmentX + cohesionX + separationX;
+        dot.vy += alignmentY + cohesionY + separationY;
 
-        // introduce randomness to motion
-        applyRandomness(dot);
-
-        // adjust horizontal velocity
-        if (
-          dot.x <= 0 ||
-          dot.x >= containerWidth - dot.size * SWARM_BOUNDARY_MULT
-        ) {
-          dot.vx = -dot.vx;
-          dot.vy += (Math.random() - 0.5) * 0.1;
-        }
-        // adjust vertical velocity
-        if (
-          dot.y <= 0 ||
-          dot.y >= containerHeight - dot.size * SWARM_BOUNDARY_MULT
-        ) {
-          dot.vy = -dot.vy;
-          dot.vx += (Math.random() - 0.5) * 0.1;
-        }
-
+        // applyRandomness(dot);
+        applyDirectionChange(dot);
         normalizeVelocity(dot);
-        preventEquilibrium(dot, frameCount);
 
-        // update position based on velocity
+        // ensure dots wrap around edges
+        if (dot.x <= 0 || dot.x >= canvas.width) dot.vx = -dot.vx;
+        if (dot.y <= 0 || dot.y >= canvas.height) dot.vy = -dot.vy;
+
         dot.x += dot.vx * speedFactor;
         dot.y += dot.vy * speedFactor;
 
-        // ensure dots stay within container
-        dot.x = Math.max(0, Math.min(dot.x, containerWidth - dot.size));
-        dot.y = Math.max(0, Math.min(dot.y, containerHeight - dot.size));
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
-        // Apply the updated position to the element
-        dotEl.style.left = `${dot.x}px`;
-        dotEl.style.top = `${dot.y}px`;
-
-        requestAnimationFrame(animate);
-      };
+        // use drawDot to render the dot on the canvas
+        context.fillStyle = randomColor;
+        context.beginPath();
+        context.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2);
+        context.fill();
+      });
 
       requestAnimationFrame(animate);
-    });
+    };
+
+    animate();
   }, []);
 
-  // handle resize
   useEffect(() => {
     const handleResize = () => {
-      // update dimensions
-      const container = document.querySelector(`.${styles["swarm-container"]}`);
-      containerWidth = container?.clientWidth ?? 0;
-      containerHeight = container?.clientHeight ?? 0;
-      //• optional: adjust dot position
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const context = canvas.getContext("2d");
+      if (!context) return;
+
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     };
 
-    // attach resize event listener
     window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  });
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-    };
-  }, []);
-
-  return <div className={styles["swarm-container"]}>TEST</div>;
+  return (
+    <div className={styles["swarm-container"]}>
+      <canvas ref={canvasRef}></canvas>
+    </div>
+  );
 };
 
 export default Swarm;
