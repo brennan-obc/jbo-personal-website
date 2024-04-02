@@ -1,7 +1,8 @@
 /* eslint-disable prefer-const */
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import styles from "../styles/Swarm.module.scss";
 import "../styles/variables.scss";
+import swarmOriginImgSrc from "../assets/moon.png";
 
 import {
   createDots,
@@ -17,8 +18,15 @@ import {
 
 const Swarm: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [hiveImage, setHiveImage] = useState(new Image());
   const speedFactor = 0.05; // ToDo: slowed for development; increase speed
   const colors = getDotColors();
+
+  useEffect(() => {
+    const img = new Image();
+    img.onload = () => setHiveImage(img);
+    img.src = swarmOriginImgSrc;
+  }, []);
 
   // create "hive" (swarm origin)
   const drawHive = (
@@ -26,22 +34,15 @@ const Swarm: React.FC = () => {
     hiveX: number,
     hiveY: number
   ) => {
-    const hiveSize = 30; // ToDo: adjust
-    const hiveColor = getComputedStyle(document.documentElement)
-      .getPropertyValue("--color-light-accent")
-      .trim();
-    context.fillStyle = hiveColor;
-    context.beginPath();
-    context.arc(hiveX, hiveY, hiveSize, 0, Math.PI * 2);
-    context.fill();
+    const xOffset = hiveImage.width / 2;
+    const yOffset = hiveImage.height / 2;
+    context.drawImage(hiveImage, hiveX - xOffset, hiveY - yOffset);
   };
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const context = canvas.getContext("2d");
-    if (!context) return;
+    const context = canvas?.getContext("2d");
+    if (!canvas || !context || !hiveImage.complete) return; // ensure image loaded
 
     // set canvas size
     canvas.width = window.innerWidth * 1.25;
@@ -91,11 +92,13 @@ const Swarm: React.FC = () => {
         context.fill();
       });
 
+      drawHive(context, hiveX, hiveY);
+
       requestAnimationFrame(animate);
     };
 
     animate();
-  }, []);
+  }, [hiveImage]);
 
   useEffect(() => {
     const handleResize = () => {
