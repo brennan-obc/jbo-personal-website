@@ -3,6 +3,7 @@ import React, { useRef, useEffect, useState } from "react";
 import styles from "../styles/Swarm.module.scss";
 import "../styles/variables.scss";
 import swarmOriginImgSrc from "../assets/moon.png";
+import { adjustImageSizeForDevice } from "../utils/responsiveUtils";
 
 import {
   createDots,
@@ -11,7 +12,6 @@ import {
   separation,
   findNeighbors,
   normalizeVelocity,
-  // applyRandomness,
   applyDirectionChange,
   getDotColors,
 } from "../utils/swarmUtils";
@@ -34,9 +34,20 @@ const Swarm: React.FC = () => {
     hiveX: number,
     hiveY: number
   ) => {
-    const xOffset = hiveImage.width / 2;
-    const yOffset = hiveImage.height / 2;
-    context.drawImage(hiveImage, hiveX - xOffset, hiveY - yOffset);
+    const imageSize = adjustImageSizeForDevice();
+
+    const offsetXY = hiveImage.width / 2;
+
+    if (hiveImage.complete) {
+      // draw image at specified coords at adjusted size
+      context.drawImage(
+        hiveImage,
+        hiveX - offsetXY,
+        hiveY - offsetXY,
+        imageSize,
+        imageSize
+      );
+    }
   };
 
   useEffect(() => {
@@ -48,8 +59,8 @@ const Swarm: React.FC = () => {
     canvas.width = window.innerWidth * 1.25;
     canvas.height = window.innerHeight * 1.25;
 
-    const hiveX = canvas.width * 0.875;
-    const hiveY = canvas.height * 0.125;
+    const hiveX = window.innerWidth * 0.9 * 1.25;
+    const hiveY = window.innerHeight * 0.2 * 1.25;
 
     const dots = createDots(1000, hiveX, hiveY);
 
@@ -58,8 +69,6 @@ const Swarm: React.FC = () => {
       context.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
 
       // draw hive
-      const hiveX = canvas.width * 0.875; // 87.5% from left
-      const hiveY = canvas.height * 0.125; // 12.5% from top
       drawHive(context, hiveX, hiveY);
 
       dots.forEach((dot) => {
