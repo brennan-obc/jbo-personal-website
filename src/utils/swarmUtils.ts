@@ -8,7 +8,7 @@ export interface Dot {
   size: number;
 }
 
-const NEIGHBOR_RADIUS = 375;
+const NEIGHBOR_RADIUS = 75;
 const MIN_VELOCITY = 0.1;
 
 export const getDotColors = () => [

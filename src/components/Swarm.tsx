@@ -19,7 +19,7 @@ import {
 const Swarm: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [hiveImage, setHiveImage] = useState(new Image());
-  const speedFactor = 0.05; // ToDo: slowed for development; increase speed
+  const speedFactor = 0.1; // ToDo: slowed for development; increase speed
   const colors = getDotColors();
 
   useEffect(() => {
@@ -30,20 +30,23 @@ const Swarm: React.FC = () => {
 
   // create "hive" (swarm origin)
   const drawHive = (
-    context: CanvasRenderingContext2D,
-    hiveX: number,
-    hiveY: number
+    context: CanvasRenderingContext2D
+    // hiveX: number,
+    // hiveY: number
   ) => {
     const imageSize = adjustImageSizeForDevice();
+    const halfImageSize = imageSize / 2;
+    const hiveX = window.innerWidth - halfImageSize;
+    const hiveY = halfImageSize;
 
-    const offsetXY = hiveImage.width / 2;
+    // const offsetXY = halfImageSize;
 
     if (hiveImage.complete) {
       // draw image at specified coords at adjusted size
       context.drawImage(
         hiveImage,
-        hiveX - offsetXY,
-        hiveY - offsetXY,
+        hiveX - halfImageSize,
+        hiveY - imageSize,
         imageSize,
         imageSize
       );
@@ -56,11 +59,12 @@ const Swarm: React.FC = () => {
     if (!canvas || !context || !hiveImage.complete) return; // ensure image loaded
 
     // set canvas size
-    canvas.width = window.innerWidth * 1.25;
-    canvas.height = window.innerHeight * 1.25;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    const hiveX = window.innerWidth * 0.9 * 1.25;
-    const hiveY = window.innerHeight * 0.2 * 1.25;
+    // pin hive to top-right corner
+    const hiveX = window.innerWidth - adjustImageSizeForDevice() / 2;
+    const hiveY = 0 + adjustImageSizeForDevice() / 2;
 
     const dots = createDots(1000, hiveX, hiveY);
 
@@ -69,7 +73,7 @@ const Swarm: React.FC = () => {
       context.clearRect(0, 0, canvas.width, canvas.height); // clear canvas
 
       // draw hive
-      drawHive(context, hiveX, hiveY);
+      drawHive(context);
 
       dots.forEach((dot) => {
         let neighbors = findNeighbors(dot, dots);
@@ -101,7 +105,7 @@ const Swarm: React.FC = () => {
         context.fill();
       });
 
-      drawHive(context, hiveX, hiveY);
+      drawHive(context);
 
       requestAnimationFrame(animate);
     };
@@ -112,18 +116,25 @@ const Swarm: React.FC = () => {
   useEffect(() => {
     const handleResize = () => {
       const canvas = canvasRef.current;
-      if (!canvas) return;
+      const context = canvas?.getContext("2d");
+      if (!canvas || !context || !hiveImage.complete) return;
 
-      const context = canvas.getContext("2d");
-      if (!context) return;
-
+      // update canvas size
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
+
+      // update swarm origin position
+      const newHiveX = window.innerWidth - adjustImageSizeForDevice() / 2;
+      const newHiveY = 0 + adjustImageSizeForDevice() / 2;
+
+      // clear canvas, redraw scene
+      context.clearRect(0, 0, canvas.width, canvas.height);
+      drawHive(context);
     };
 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  });
+  }, [hiveImage]);
 
   return (
     <div className={styles["swarm-container"]}>
