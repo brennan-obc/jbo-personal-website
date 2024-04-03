@@ -29,27 +29,16 @@ const Swarm: React.FC = () => {
   }, []);
 
   // create "hive" (swarm origin)
-  const drawHive = (
-    context: CanvasRenderingContext2D
-    // hiveX: number,
-    // hiveY: number
-  ) => {
+  const drawHive = (context: CanvasRenderingContext2D) => {
+    const xOffset = 35;
+    const yOffset = -35;
     const imageSize = adjustImageSizeForDevice();
-    const halfImageSize = imageSize / 2;
-    const hiveX = window.innerWidth - halfImageSize;
-    const hiveY = halfImageSize;
-
-    // const offsetXY = halfImageSize;
+    const hiveX = window.innerWidth - imageSize + xOffset;
+    const hiveY = yOffset;
 
     if (hiveImage.complete) {
       // draw image at specified coords at adjusted size
-      context.drawImage(
-        hiveImage,
-        hiveX - halfImageSize,
-        hiveY - imageSize,
-        imageSize,
-        imageSize
-      );
+      context.drawImage(hiveImage, hiveX, hiveY, imageSize, imageSize);
     }
   };
 
