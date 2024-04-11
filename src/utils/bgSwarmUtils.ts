@@ -1,33 +1,8 @@
 /* eslint-disable prefer-const */
-export interface Dot {
-  id: number;
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  size: number;
-}
+import { Dot } from "./bgUtils";
 
 const NEIGHBOR_RADIUS = 275;
 const MIN_VELOCITY = 0.1;
-
-export const getDotColors = () => [
-  getComputedStyle(document.documentElement)
-    .getPropertyValue("--color-light-dot-1")
-    .trim(),
-  getComputedStyle(document.documentElement)
-    .getPropertyValue("--color-light-dot-2")
-    .trim(),
-  getComputedStyle(document.documentElement)
-    .getPropertyValue("--color-light-dot-3")
-    .trim(),
-  getComputedStyle(document.documentElement)
-    .getPropertyValue("--color-light-dot-4")
-    .trim(),
-  getComputedStyle(document.documentElement)
-    .getPropertyValue("--color-light-dot-5")
-    .trim(),
-];
 
 // add dots to canvas
 export const createDots = (
@@ -140,18 +115,23 @@ export const normalizeVelocity = (dot: Dot) => {
   }
 };
 
-// // subtly randomize parameters
-// export const applyRandomness = (dot: Dot) => {
-//   const baseRandomness = 0.2;
-//   const currentSpeed = Math.sqrt(dot.vx ** 2 + dot.vy ** 2);
-//
-//   // apply more randomness to slower dots
-//   const scaledRandomness =
-//     currentSpeed < MIN_VELOCITY ? baseRandomness * 2 : baseRandomness;
-//
-//   dot.vx += (Math.random() - 0.5) * scaledRandomness;
-//   dot.vy += (Math.random() - 0.5) * scaledRandomness;
-// };
+export const applyGravity = (
+  dot: Dot,
+  pointOfGravity: { x: number; y: number },
+  strength: number
+) => {
+  const dx = pointOfGravity.x - dot.x;
+  const dy = pointOfGravity.y - dot.y;
+  const distance = Math.sqrt(dx * dx + dy * dy);
+
+  // normalize direction
+  const dirX = dx / distance;
+  const dirY = dy / distance;
+
+  // apply gravity as force towards point of gravity
+  dot.vx += dirX * strength;
+  dot.vy += dirY * strength;
+};
 
 // increase frequency & impact of direction changes
 export const applyDirectionChange = (dot: Dot) => {
@@ -176,4 +156,49 @@ export const applyDirectionChange = (dot: Dot) => {
     dot.vx = Math.cos(currentAngle) * speed;
     dot.vy = Math.sin(currentAngle) * speed;
   }
+};
+
+// create swarm effect
+export const animateSwarm = (
+  context: CanvasRenderingContext2D,
+  dots: Dot[],
+  speedFactor: number,
+  colors: string[],
+  hiveImage: HTMLImageElement,
+  drawHive: (context: CanvasRenderingContext2D) => void
+) => {
+  const animate = () => {
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clear canvas
+
+    drawHive(context); // Draw hive image
+
+    dots.forEach((dot) => {
+      const neighbors = findNeighbors(dot, dots);
+      const { ax: alignmentX, ay: alignmentY } = alignment(dot, neighbors);
+      const { ax: cohesionX, ay: cohesionY } = cohesion(dot, neighbors);
+      const { ax: separationX, ay: separationY } = separation(dot, neighbors);
+
+      dot.vx += alignmentX + cohesionX + separationX;
+      dot.vy += alignmentY + cohesionY + separationY;
+
+      applyDirectionChange(dot);
+      normalizeVelocity(dot);
+
+      if (dot.x <= 0 || dot.x >= context.canvas.width) dot.vx = -dot.vx;
+      if (dot.y <= 0 || dot.y >= context.canvas.height) dot.vy = -dot.vy;
+
+      dot.x += dot.vx * speedFactor;
+      dot.y += dot.vy * speedFactor;
+
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      context.fillStyle = randomColor;
+      context.beginPath();
+      context.arc(dot.x, dot.y, dot.size, 0, Math.PI * 2);
+      context.fill();
+    });
+
+    requestAnimationFrame(animate);
+  };
+
+  animate();
 };

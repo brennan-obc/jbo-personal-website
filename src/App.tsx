@@ -5,7 +5,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Home from "./pages/Home";
 import Projects from "./pages/Projects";
-import Swarm from "./components/Swarm";
+import Background from "./components/Background";
 import "./styles/App.css";
 
 function App() {
@@ -13,7 +13,7 @@ function App() {
 
   return (
     <>
-      <Swarm />
+      <Background />
       <BrowserRouter>
         <div className='relative min-h-screen'>
           <div className='relative z-10'>

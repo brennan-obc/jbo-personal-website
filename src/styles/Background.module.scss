@@ -1,6 +1,6 @@
 @import "./variables.scss";
 
-.swarm-container {
+.bg-container {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -10,14 +10,14 @@
   background-color: var(--color-dark-main);
 }
 
-.swarm-container__dot {
+.bg-container__dot {
   position: absolute;
   border-radius: 50%;
   background-color: #000;
 }
 
-// .swarm-container__button--freeze {
+// .bg-container__button--freeze {
 // }
 
-// .swarm-container__button--fall {
+// .bg-container__button--fall {
 // }
