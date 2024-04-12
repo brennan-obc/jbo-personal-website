@@ -39,7 +39,7 @@ const Background: React.FC = () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Initialize and draw static background only once
+    // initialize and draw static background once
     drawStaticBackground(context, canvas.width, canvas.height);
 
     let shootingStars: ShootingStar[] = [];
@@ -48,13 +48,13 @@ const Background: React.FC = () => {
       const star = createShootingStar(context, canvas.width, canvas.height);
       shootingStars.push(star);
 
-      // Set a timeout to add another shooting star
+      // set timeout to add shooting star
       setTimeout(addShootingStar, Math.random() * 10000 + 5000); // 5 to 15 seconds
     };
 
     const animate = () => {
       shootingStars.forEach((star, index) => {
-        // Clear only the path of each star, this requires calculating the clear area more precisely
+        // ToDo: fix path clearing
         context.clearRect(
           star.x - star.size * 2,
           star.y - star.size * 2,
@@ -62,7 +62,7 @@ const Background: React.FC = () => {
           star.size * 4
         );
         animateShootingStar(star, context, () => {
-          shootingStars.splice(index, 1); // Remove the star once it's out of bounds
+          shootingStars.splice(index, 1); // ToDo: ensure removal
         });
       });
 
