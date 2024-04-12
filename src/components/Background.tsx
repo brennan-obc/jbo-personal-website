@@ -4,6 +4,11 @@ import styles from "../styles/Background.module.scss";
 import "../styles/variables.scss";
 import swarmOriginImgSrc from "../assets/moon.png";
 import { adjustImageSizeForDevice } from "../utils/responsiveUtils";
+import {
+  ShootingStar,
+  createShootingStar,
+  animateShootingStar,
+} from "../utils/bgAnimationUtils";
 
 import {
   createDots,
@@ -24,36 +29,51 @@ import {
 
 const Background: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [hiveImage, setHiveImage] = useState(new Image());
-  const colors = getDotColors();
+  let animationFrameId: number;
 
-  useEffect(() => {
-    const img = new Image();
-    img.onload = () => setHiveImage(img);
-    img.src = swarmOriginImgSrc;
-  }, []);
-
-  // draw background, handle window resizes
   useEffect(() => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
-    if (!canvas || !context /*  || !hiveImage.complete */) return; // ToDo: hive image?
+    if (!canvas || !context) return;
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+
+    // Initialize and draw static background only once
     drawStaticBackground(context, canvas.width, canvas.height);
 
-    // wrapper for handling resize
-    const resizeAndRedraw = () => {
-      handleResize(canvasRef, () => {
-        drawStaticBackground(context, canvas.width, canvas.height);
-      });
+    let shootingStars: ShootingStar[] = [];
+
+    const addShootingStar = () => {
+      const star = createShootingStar(context, canvas.width, canvas.height);
+      shootingStars.push(star);
+
+      // Set a timeout to add another shooting star
+      setTimeout(addShootingStar, Math.random() * 10000 + 5000); // 5 to 15 seconds
     };
 
-    window.addEventListener("resize", resizeAndRedraw);
+    const animate = () => {
+      shootingStars.forEach((star, index) => {
+        // Clear only the path of each star, this requires calculating the clear area more precisely
+        context.clearRect(
+          star.x - star.size * 2,
+          star.y - star.size * 2,
+          star.size * 4,
+          star.size * 4
+        );
+        animateShootingStar(star, context, () => {
+          shootingStars.splice(index, 1); // Remove the star once it's out of bounds
+        });
+      });
+
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    addShootingStar();
+    animate();
 
     return () => {
-      window.removeEventListener("resize", resizeAndRedraw);
+      cancelAnimationFrame(animationFrameId);
     };
   }, []);
 
