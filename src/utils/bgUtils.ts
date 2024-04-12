@@ -26,23 +26,70 @@ export const getDotColors = () => [
     .trim(),
 ];
 
-// create dynamically generated static background
+export const getShadowColors = () => [
+  getComputedStyle(document.documentElement)
+    .getPropertyValue("--color-star-orange")
+    .trim(),
+  getComputedStyle(document.documentElement)
+    .getPropertyValue("--color-star-red")
+    .trim(),
+  getComputedStyle(document.documentElement)
+    .getPropertyValue("--color-star-blue")
+    .trim(),
+  getComputedStyle(document.documentElement)
+    .getPropertyValue("--color-star-yellow")
+    .trim(),
+  getComputedStyle(document.documentElement)
+    .getPropertyValue("--color-star-purple")
+    .trim(),
+];
+
+// dynamically generate cosmic background
 export const drawStaticBackground = (
   context: CanvasRenderingContext2D,
   width: number,
   height: number
 ) => {
+  const shadowColors = getShadowColors();
   const starCount = 500;
+
   for (let i = 0; i < starCount; i++) {
     const x = Math.random() * width;
     const y = Math.random() * height;
     const size = Math.random() * 3;
     const opacity = Math.random();
 
+    const shadowColorIndex = Math.floor(Math.random() * shadowColors.length);
+    const shadowColor = shadowColors[shadowColorIndex];
+    const shadowOpacity = Math.random();
+
+    // debug log
+    console.log(`Star ${i}:`, {
+      x,
+      y,
+      size,
+      shadowColor: `rgba(${shadowColor}, ${shadowOpacity})`,
+      shadowBlur: 10,
+      shadowOpacity,
+    });
+
+    // set shadows
+    context.shadowColor = `rgba(${shadowColor}, ${shadowOpacity})`;
+    context.shadowBlur = 10;
+    context.shadowOffsetX = 0;
+    context.shadowOffsetY = 0;
+
+    // draw star with shadow
     context.beginPath();
     context.arc(x, y, size, 0, Math.PI * 2);
     context.fillStyle = `rgba(255, 255, 255, ${opacity})`;
     context.fill();
+
+    // reset shadows after drawing each star
+    context.shadowColor = "transparent";
+    context.shadowBlur = 0;
+    context.shadowOffsetX = 0;
+    context.shadowOffsetY = 0;
   }
 };
 

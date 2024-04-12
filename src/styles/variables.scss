@@ -1,29 +1,36 @@
 :root {
   // general (dark & light modes)
-  --color-dark-main: #000000;
-  --color-dark-accent: #161618;
-  --color-mid-accent: #212124;
-  --color-light-accent: #818181;
-  --color-light-main: #ffffff;
+  --color-dark-main: rgba(0, 0, 0, 1);
+  --color-dark-accent: rgba(22, 22, 24, 1);
+  --color-mid-accent: rgba(33, 33, 36, 1);
+  --color-light-accent: rgba(129, 129, 129, 1);
+  --color-light-main: rgba(255, 255, 255, 1);
 
   // UI (dark & light modes)
-  --color-ui-warning: #ff3c36;
-  --color-ui-alert: #ffc500;
-  --color-ui-success: #00c41e;
-  --color-ui-accent-shadow: #333436;
-  --color-ui-accent-highlight: #353738;
+  --color-ui-warning: rgba(255, 60, 54, 1);
+  --color-ui-alert: rgba(255, 197, 0, 1);
+  --color-ui-success: rgba(0, 196, 30, 1);
+  --color-ui-accent-shadow: rgba(51, 52, 54, 1);
+  --color-ui-accent-highlight: rgba(53, 55, 56, 1);
 
   // swarm dots (dark)
-  --color-dark-dot-1: #777777;
-  --color-dark-dot-2: #666666;
-  --color-dark-dot-3: #555555;
-  --color-dark-dot-4: #444444;
-  --color-dark-dot-5: #333333;
+  --color-dark-dot-1: rgba(119, 119, 119, 1);
+  --color-dark-dot-2: rgba(102, 102, 102, 1);
+  --color-dark-dot-3: rgba(85, 85, 85, 1);
+  --color-dark-dot-4: rgba(68, 68, 68, 1);
+  --color-dark-dot-5: rgba(51, 51, 51, 1);
 
   // swarm dots (light)
-  --color-light-dot-1: #888888;
-  --color-light-dot-2: #999999;
-  --color-light-dot-3: #aaaaaa;
-  --color-light-dot-4: #bbbbbb;
-  --color-light-dot-5: #cccccc;
+  --color-light-dot-1: rgba(136, 136, 136, 1);
+  --color-light-dot-2: rgba(153, 153, 153, 1);
+  --color-light-dot-3: rgba(170, 170, 170, 1);
+  --color-light-dot-4: rgba(187, 187, 187, 1);
+  --color-light-dot-5: rgba(204, 204, 204, 1);
+
+  // bg star shadow
+  --color-star-orange: rgba(255, 210, 125, 1);
+  --color-star-red: rgba(255, 163, 113, 1);
+  --color-star-blue: rgba(166, 168, 255, 1);
+  --color-star-yellow: rgba(255, 250, 134, 1);
+  --color-star-purple: rgba(168, 123, 255, 1);
 }
