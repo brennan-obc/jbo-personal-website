@@ -51,45 +51,44 @@ export const drawStaticBackground = (
   height: number
 ) => {
   const shadowColors = getShadowColors();
-  const starCount = 500;
+  const starColors = getDotColors();
+  const starCount = 1000;
 
   for (let i = 0; i < starCount; i++) {
     const x = Math.random() * width;
     const y = Math.random() * height;
-    const size = Math.random() * 3;
-    const opacity = Math.random();
+    // ToDo: rename "star" & "shadow"
+    const starSize = Math.random() * 1.85 + 0.5;
+    const shadowSize = Math.random() * 2 + 0.75;
+    const shadowOpacity = Math.random() * 0.3 + 0.2;
 
-    const shadowColorIndex = Math.floor(Math.random() * shadowColors.length);
-    const shadowColor = shadowColors[shadowColorIndex];
-    const shadowOpacity = Math.random();
+    // shadow is always larger than the star
+    const effectiveShadowSize = Math.max(shadowSize, starSize + 0.2);
 
-    // debug log
-    console.log(`Star ${i}:`, {
-      x,
-      y,
-      size,
-      shadowColor: `rgba(${shadowColor}, ${shadowOpacity})`,
-      shadowBlur: 10,
-      shadowOpacity,
-    });
+    // modify shadow opacity
+    let shadowColor =
+      shadowColors[Math.floor(Math.random() * shadowColors.length)];
+    // extract RGB
+    let rgbMatch = shadowColor.match(
+      /rgba\((\d+), (\d+), (\d+), (\d+\.?\d*)\)/
+    );
+    if (rgbMatch) {
+      shadowColor = `rgba(${rgbMatch[1]}, ${rgbMatch[2]}, ${rgbMatch[3]}, ${shadowOpacity})`;
+    }
 
-    // set shadows
-    context.shadowColor = `rgba(${shadowColor}, ${shadowOpacity})`;
-    context.shadowBlur = 10;
-    context.shadowOffsetX = 0;
-    context.shadowOffsetY = 0;
+    const starColor = starColors[Math.floor(Math.random() * starColors.length)];
 
-    // draw star with shadow
+    // draw shadow
     context.beginPath();
-    context.arc(x, y, size, 0, Math.PI * 2);
-    context.fillStyle = `rgba(255, 255, 255, ${opacity})`;
+    context.arc(x, y, effectiveShadowSize, 0, Math.PI * 2);
+    context.fillStyle = shadowColor;
     context.fill();
 
-    // reset shadows after drawing each star
-    context.shadowColor = "transparent";
-    context.shadowBlur = 0;
-    context.shadowOffsetX = 0;
-    context.shadowOffsetY = 0;
+    // draw star
+    context.beginPath();
+    context.arc(x, y, starSize, 0, Math.PI * 2);
+    context.fillStyle = starColor;
+    context.fill();
   }
 };
 
