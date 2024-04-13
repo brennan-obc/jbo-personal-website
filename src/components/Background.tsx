@@ -49,21 +49,29 @@ const Background: React.FC = () => {
       shootingStars.push(star);
 
       // set timeout to add shooting star
-      setTimeout(addShootingStar, Math.random() * 10000 + 5000); // 5 to 15 seconds
+      setTimeout(addShootingStar, Math.random() * 7500 + 3500); // 3.5 to 11 seconds
     };
 
     const animate = () => {
       shootingStars.forEach((star, index) => {
-        // ToDo: fix path clearing
+        // Clear only the old path of the star
         context.clearRect(
-          star.x - star.size * 2,
-          star.y - star.size * 2,
+          star.prevX - star.size * 2,
+          star.prevY - star.size * 2,
           star.size * 4,
           star.size * 4
         );
-        animateShootingStar(star, context, () => {
-          shootingStars.splice(index, 1); // ToDo: ensure removal
-        });
+
+        if (
+          star.x < 0 ||
+          star.x > context.canvas.width ||
+          star.y < 0 ||
+          star.y > context.canvas.height
+        ) {
+          shootingStars.splice(index, 1); // remove out of bounds stars
+        } else {
+          animateShootingStar(star, context);
+        }
       });
 
       animationFrameId = requestAnimationFrame(animate);

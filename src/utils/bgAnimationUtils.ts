@@ -7,6 +7,8 @@ export interface ShootingStar {
   vy: number;
   size: number;
   color: string;
+  prevX: number;
+  prevY: number;
 }
 
 export const createShootingStar = (
@@ -16,9 +18,9 @@ export const createShootingStar = (
 ): ShootingStar => {
   const x = Math.random() * width;
   const y = Math.random() * height;
-  const size = Math.random() * 3 + 1; // size: 1px — 4px
+  const size = Math.random() * 4 + 1.5; // 1.5px — 5.5px
   const angle = Math.random() * Math.PI * 2;
-  const speed = Math.random() * 4 + 1; // speed: 1 — 5
+  const speed = Math.random() * 9 + 9; // 9 — 18
   const vx = Math.cos(angle) * speed;
   const vy = Math.sin(angle) * speed;
   const colors = [
@@ -35,30 +37,24 @@ export const createShootingStar = (
   ];
   const color = colors[Math.floor(Math.random() * colors.length)];
 
-  return { x, y, vx, vy, size, color };
+  return { x, y, vx, vy, size, color, prevX: x, prevY: y };
 };
 
 export const animateShootingStar = (
   star: ShootingStar,
-  context: CanvasRenderingContext2D,
-  callback: () => void
+  context: CanvasRenderingContext2D
 ) => {
-  context.beginPath();
-  context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-  context.fillStyle = star.color;
-  context.fill();
+  // update previous position
+  star.prevX = star.x;
+  star.prevY = star.y;
 
   // update star position
   star.x += star.vx;
   star.y += star.vy;
 
-  // check if star is out of bounds
-  if (
-    star.x < 0 ||
-    star.x > context.canvas.width ||
-    star.y < 0 ||
-    star.y > context.canvas.height
-  ) {
-    callback(); // reset or remove star
-  }
+  // draw star at new position
+  context.beginPath();
+  context.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+  context.fillStyle = star.color;
+  context.fill();
 };
