@@ -2,24 +2,13 @@
 import React, { useRef, useEffect, useState } from "react";
 import styles from "../styles/Background.module.scss";
 import "../styles/variables.scss";
-import swarmOriginImgSrc from "../assets/moon.png";
-import { adjustImageSizeForDevice } from "../utils/responsiveUtils";
+// import swarmOriginImgSrc from "../assets/moon.png";
+// import { adjustImageSizeForDevice } from "../utils/responsiveUtils";
 import {
   ShootingStar,
   createShootingStar,
   animateShootingStar,
 } from "../utils/bgAnimationUtils";
-
-import {
-  createDots,
-  alignment,
-  cohesion,
-  separation,
-  findNeighbors,
-  normalizeVelocity,
-  applyDirectionChange,
-  animateSwarm,
-} from "../utils/bgSwarmUtils";
 
 import {
   handleResize,
@@ -35,6 +24,13 @@ const Background: React.FC = () => {
     const canvas = canvasRef.current;
     const context = canvas?.getContext("2d");
     if (!canvas || !context) return;
+
+    const handleResize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      drawStaticBackground(context, canvas.width, canvas.height);
+    };
+    window.addEventListener("resize", handleResize);
 
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -81,6 +77,7 @@ const Background: React.FC = () => {
     animate();
 
     return () => {
+      window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
