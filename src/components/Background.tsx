@@ -8,10 +8,18 @@ import {
   ShootingStar,
   createShootingStar,
   animateShootingStar,
-  DriftingShape,
-  createDriftingShape,
-  animateDriftingShape,
 } from "../utils/bgAnimationUtils";
+
+import {
+  createDots,
+  alignment,
+  cohesion,
+  separation,
+  findNeighbors,
+  normalizeVelocity,
+  applyDirectionChange,
+  animateSwarm,
+} from "../utils/bgSwarmUtils";
 
 import {
   handleResize,
@@ -35,7 +43,6 @@ const Background: React.FC = () => {
     drawStaticBackground(context, canvas.width, canvas.height);
 
     let shootingStars: ShootingStar[] = [];
-    let driftingShapes: DriftingShape[] = [];
 
     const addShootingStar = () => {
       const star = createShootingStar(context, canvas.width, canvas.height);
@@ -45,17 +52,9 @@ const Background: React.FC = () => {
       setTimeout(addShootingStar, Math.random() * 7500 + 3500); // 3.5 to 11 seconds
     };
 
-    const addDriftingShape = () => {
-      const shape = createDriftingShape(context, canvas.width, canvas.height);
-      driftingShapes.push(shape);
-
-      // add new shapes less frequently than shooting stars
-      setTimeout(addDriftingShape, Math.random() * 1000 + 5000); // 5 — 15 seconds
-    };
-
     const animate = () => {
       shootingStars.forEach((star, index) => {
-        // clear only old path of stars
+        // Clear only the old path of the star
         context.clearRect(
           star.prevX - star.size * 2,
           star.prevY - star.size * 2,
@@ -75,32 +74,10 @@ const Background: React.FC = () => {
         }
       });
 
-      driftingShapes.forEach((shape, index) => {
-        // clear only old path of shapes
-        context.clearRect(
-          shape.x - shape.size,
-          shape.y - shape.size,
-          shape.size * 2,
-          shape.size * 2
-        );
-
-        if (
-          shape.x < -shape.size ||
-          shape.x > context.canvas.width + shape.size ||
-          shape.y < -shape.size ||
-          shape.y > context.canvas.height + shape.size
-        ) {
-          driftingShapes.splice(index, 1);
-        } else {
-          animateDriftingShape(shape, context);
-        }
-      });
-
       animationFrameId = requestAnimationFrame(animate);
     };
 
     addShootingStar();
-    addDriftingShape();
     animate();
 
     return () => {

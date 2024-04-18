@@ -13,56 +13,6 @@ export interface ShootingStar {
   prevY: number;
 }
 
-export interface DriftingShape {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  size: number;
-  opacity: number;
-  color: string;
-  // prevX: number;
-  // prevY: number;
-}
-
-export const createDriftingShape = (
-  context: CanvasRenderingContext2D,
-  width: number,
-  height: number
-): DriftingShape => {
-  const colors = getShadowColors();
-  const x = Math.random() * width;
-  const y = Math.random() * height;
-  const vx = (Math.random() - 0.5) * 0.5;
-  const vy = (Math.random() - 0.5) * 0.5;
-  const size = Math.random() * 50 + 30;
-  const opacity = Math.random() * 0.5 + 0.25;
-  const color = colors[Math.floor(Math.random() * colors.length)];
-
-  return { x, y, vx, vy, size, opacity, color };
-};
-
-export const animateDriftingShape = (
-  shape: DriftingShape,
-  context: CanvasRenderingContext2D
-) => {
-  // move shape
-  shape.x += shape.vx;
-  shape.y += shape.vy;
-
-  // apply global composite operation
-  context.globalCompositeOperation = "lighter"; //ToDo: experiment with effects
-  // lighter, copy, xor, multiply, screen, overlay, darken, lighten,
-  //  color-dodge, color-burn, hard-light, soft-light, difference,
-  //  exclusion, hue, saturation, color, luminosity
-
-  // draw shape
-  context.fillStyle = `rgba(${shape.color},${shape.opacity})`;
-  context.beginPath();
-  context.arc(shape.x, shape.y, shape.size, 0, Math.PI * 2);
-  context.fill();
-};
-
 export const createShootingStar = (
   context: CanvasRenderingContext2D,
   width: number,
