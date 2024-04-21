@@ -93,7 +93,7 @@ export const drawStaticBackground = (
 };
 
 // handle window resize
-export const handleResize = (
+export const onResize = (
   canvasRef: React.RefObject<HTMLCanvasElement>,
   draw: () => void
 ) => {

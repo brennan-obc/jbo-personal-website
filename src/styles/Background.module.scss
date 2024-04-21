@@ -2,11 +2,6 @@
 
 .bg-container {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  // width: 100%;
-  // height: 100%;
   background-color: var(--color-dark-main);
 }
 
@@ -16,8 +11,6 @@
   background-color: #000;
 }
 
-// .bg-container__button--freeze {
-// }
-
-// .bg-container__button--fall {
-// }
+canvas {
+  display: block;
+}
