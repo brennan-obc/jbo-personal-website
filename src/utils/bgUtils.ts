@@ -92,6 +92,12 @@ export const drawStaticBackground = (
   context.fillStyle = gradient;
   context.fillRect(0, 0, width, height);
 
+  // crosshairs at center point
+  context.fillStyle = "red";
+  context.beginPath();
+  context.arc(innerX, innerY, 10, 0, 2 * Math.PI);
+  context.fill();
+
   const shadowColors = getShadowColors();
   const starColors = getDotColors();
   const starCount = 1000;
@@ -131,27 +137,5 @@ export const drawStaticBackground = (
     context.arc(x, y, starSize, 0, Math.PI * 2);
     context.fillStyle = starColor;
     context.fill();
-  }
-};
-
-// handle window resize
-export const onResize = (
-  staticCanvasRef: React.RefObject<HTMLCanvasElement>,
-  draw: () => void
-) => {
-  const canvas = staticCanvasRef.current;
-  if (!canvas) return;
-
-  // store current dimensions to compare against new dimensions
-  const currentWidth = canvas.width;
-  const currentHeight = canvas.height;
-
-  // update canvas size
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  // only redraw if dimensions have changed
-  if (canvas.width !== currentWidth || canvas.height !== currentHeight) {
-    draw();
   }
 };

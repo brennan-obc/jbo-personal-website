@@ -95,7 +95,7 @@ const Background = () => {
 
   useEffect(() => {
     let frameId: number;
-    const rotationSpeed = 0.001;
+    const rotationSpeed = 0.1;
 
     const updateRotation = () => {
       setRotationDegrees((prev) => (prev + rotationSpeed) % 360);
@@ -108,10 +108,11 @@ const Background = () => {
   }, []);
 
   useEffect(() => {
-    setRotationEffect((prev) => ({
-      ...prev,
+    setRotationEffect({
       transform: `rotate(${rotationDegrees}deg)`,
-    }));
+      transformOrigin: "center center",
+      transition: "transform 1s ease",
+    });
   }, [rotationDegrees]);
 
   useEffect(() => {
