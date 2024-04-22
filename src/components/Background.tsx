@@ -15,6 +15,7 @@ import { onResize, getDotColors, drawStaticBackground } from "../utils/bgUtils";
 const Background = () => {
   const staticCanvasRef = useRef<HTMLCanvasElement>(null);
   const shootingStarsCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [rotationDegrees, setRotationDegrees] = useState(0);
   const canvasOverhang = 1.1;
   const [style, setStyle] = useState({
     filter: "brightness(100%)",
@@ -92,6 +93,26 @@ const Background = () => {
   }, []);
 
   useEffect(() => {
+    const rotationSpeed = 0.005;
+    const rotationDirection =
+      Math.random() < 0.5 ? -rotationSpeed : rotationSpeed;
+    let frameId: number;
+
+    const updateRotation = () => {
+      setRotationDegrees(
+        (prevDegrees) => (prevDegrees + rotationDirection + 360) % 360
+      );
+      frameId = requestAnimationFrame(updateRotation);
+    };
+
+    updateRotation();
+
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
+  }, []);
+
+  useEffect(() => {
     let frameId: number;
 
     const animateCanvasStyle = () => {
@@ -113,10 +134,11 @@ const Background = () => {
 
       setStyle({
         filter: `brightness(${brightness}%) hue-rotate(${hueRotation}deg) blur(${blur}px) saturate(${saturation}%)`,
-        transform: `scale(${scale})`,
+        transform: `rotate(${rotationDegrees}deg) scale(${scale})`,
         transformOrigin: "center center",
         transition: "transform 1s ease, filter 1s ease",
       });
+
       frameId = requestAnimationFrame(animateCanvasStyle);
     };
 
@@ -128,7 +150,7 @@ const Background = () => {
         cancelAnimationFrame(frameId);
       };
     }
-  }, []);
+  }, [rotationDegrees]);
 
   return (
     <div className={styles["bg-container"]}>
