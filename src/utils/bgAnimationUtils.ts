@@ -14,15 +14,15 @@ export interface ShootingStar {
 }
 
 export const createShootingStar = (
-  context: CanvasRenderingContext2D,
   width: number,
   height: number
 ): ShootingStar => {
   const x = Math.random() * width;
   const y = Math.random() * height;
-  const size = Math.random() * 4 + 1.5; // 1.5px — 5.5px
+  const size = Math.random() * 0.2 + 0.2;
   const angle = Math.random() * Math.PI * 2;
-  const speed = Math.random() * 9 + 9; // 9 — 18
+  const speed = Math.random() * 2.25 + 0.5;
+  // const speed = Math.random() * 0.05 + 0.05; //! slowed down for examination
   const vx = Math.cos(angle) * speed;
   const vy = Math.sin(angle) * speed;
   const colors = [
@@ -46,6 +46,9 @@ export const animateShootingStar = (
   star: ShootingStar,
   context: CanvasRenderingContext2D
 ) => {
+  context.globalCompositeOperation = "source-over";
+  context.globalAlpha = 1.0; // Reset opacity to full
+
   // update previous position
   star.prevX = star.x;
   star.prevY = star.y;

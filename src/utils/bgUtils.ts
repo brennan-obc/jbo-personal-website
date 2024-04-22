@@ -94,10 +94,10 @@ export const drawStaticBackground = (
 
 // handle window resize
 export const onResize = (
-  canvasRef: React.RefObject<HTMLCanvasElement>,
+  staticCanvasRef: React.RefObject<HTMLCanvasElement>,
   draw: () => void
 ) => {
-  const canvas = canvasRef.current;
+  const canvas = staticCanvasRef.current;
   if (!canvas) return;
 
   // store current dimensions to compare against new dimensions

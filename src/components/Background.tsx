@@ -13,7 +13,8 @@ import {
 import { onResize, getDotColors, drawStaticBackground } from "../utils/bgUtils";
 
 const Background = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const staticCanvasRef = useRef<HTMLCanvasElement>(null);
+  const shootingStarsCanvasRef = useRef<HTMLCanvasElement>(null);
   const canvasOverhang = 1.1;
   const [style, setStyle] = useState({
     filter: "brightness(100%)",
@@ -23,7 +24,7 @@ const Background = () => {
   });
 
   useEffect(() => {
-    const canvas = canvasRef.current;
+    const canvas = staticCanvasRef.current;
     const context = canvas?.getContext("2d");
     if (!canvas || !context) return;
 
@@ -46,35 +47,40 @@ const Background = () => {
   }, []);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
-    if (!canvas || !context) return;
+    const shootingStarsCanvas = shootingStarsCanvasRef.current;
+    const shootingStarsContext = shootingStarsCanvas?.getContext("2d");
+    if (!shootingStarsCanvas || !shootingStarsContext) return;
 
     let shootingStars: ShootingStar[] = [];
 
     const addShootingStar = () => {
-      const star = createShootingStar(context, canvas.width, canvas.height);
+      const star = createShootingStar(
+        shootingStarsCanvas.width,
+        shootingStarsCanvas.height
+      );
       shootingStars.push(star);
-      setTimeout(addShootingStar, Math.random() * 7500 + 3500); // 3.5 to 11 seconds
+      setTimeout(addShootingStar, Math.random() * 2000 + 2000); // 3.5 to 7 seconds
+      // setTimeout(addShootingStar, Math.random() * 4500 + 3500); // 3.5 to 7 seconds
     };
 
     const animateStars = () => {
+      shootingStarsContext.clearRect(
+        0,
+        0,
+        shootingStarsCanvas.width,
+        shootingStarsCanvas.height
+      );
+
       shootingStars.forEach((star, index) => {
-        context.clearRect(
-          star.prevX - star.size * 2,
-          star.prevY - star.size * 2,
-          star.size * 4,
-          star.size * 4
-        );
         if (
           star.x < 0 ||
-          star.x > context.canvas.width ||
+          star.x > shootingStarsCanvas.width ||
           star.y < 0 ||
-          star.y > context.canvas.height
+          star.y > shootingStarsCanvas.height
         ) {
-          shootingStars.splice(index, 1); // remove out of bounds stars
+          shootingStars.splice(index, 1);
         } else {
-          animateShootingStar(star, context); // move and redraw star
+          animateShootingStar(star, shootingStarsContext);
         }
       });
 
@@ -89,12 +95,24 @@ const Background = () => {
     let frameId: number;
 
     const animateCanvasStyle = () => {
-      const intervalScale = Date.now() * 0.002;
-      const intervalBrightness = Date.now() * 0.001;
-      const brightness = 100 + Math.sin(intervalBrightness) * 75; // oscillate brightness
-      const scale = 1 + Math.sin(intervalScale) * 0.01; // oscillate scale
+      // calculate random intervals for each effect
+      const intervalScale = Math.random() * 0.1 + 0.5;
+      const intervalBrightness = Math.random() * 1 + 0.9;
+      const intervalHue = Math.random() * 360;
+      const intervalBlur = Math.random() * 2;
+      const intervalSaturation = Math.random() * 100 + 100;
+
+      const time = Date.now() * 0.002; // base time for fluctuation
+
+      // dynamic style oscillation calculation
+      const brightness = 100 + Math.sin(time * intervalBrightness) * 50; // brightness: 50%-150%
+      const scale = 1 + Math.sin(time * intervalScale) * 0.015; // scale: 0.95-1.05
+      const hueRotation = Math.sin(time) * intervalHue; // hue rotation: 0deg-360deg
+      const blur = Math.abs(Math.sin(time)) * intervalBlur; // blur: 0px-2px
+      const saturation = 100 + Math.sin(time) * intervalSaturation; // saturation: 100%-200%
+
       setStyle({
-        filter: `brightness(${brightness}%)`,
+        filter: `brightness(${brightness}%) hue-rotate(${hueRotation}deg) blur(${blur}px) saturate(${saturation}%)`,
         transform: `scale(${scale})`,
         transformOrigin: "center center",
         transition: "transform 1s ease, filter 1s ease",
@@ -102,19 +120,25 @@ const Background = () => {
       frameId = requestAnimationFrame(animateCanvasStyle);
     };
 
-    animateCanvasStyle();
+    const staticCanvas = staticCanvasRef.current;
+    if (staticCanvas) {
+      animateCanvasStyle();
 
-    return () => {
-      cancelAnimationFrame(frameId);
-    };
+      return () => {
+        cancelAnimationFrame(frameId);
+      };
+    }
   }, []);
 
   return (
-    <div
-      className={styles["bg-container"]}
-      style={style}
-    >
-      <canvas ref={canvasRef}></canvas>
+    <div className={styles["bg-container"]}>
+      {/* static background */}
+      <canvas
+        style={style}
+        ref={staticCanvasRef}
+      ></canvas>
+      {/* shooting stars */}
+      <canvas ref={shootingStarsCanvasRef}></canvas>{" "}
     </div>
   );
 };
