@@ -2,115 +2,117 @@
 import { useRef, useEffect, useState } from "react";
 import styles from "../styles/Background.module.scss";
 import "../styles/variables.scss";
-// import swarmOriginImgSrc from "../assets/moon.png";
-// import { adjustImageSizeForDevice } from "../utils/responsiveUtils";
+import { setCanvasSize } from "../utils/responsiveUtils";
 import {
   ShootingStar,
   createShootingStar,
   animateShootingStar,
 } from "../utils/bgAnimationUtils";
 
-import { onResize, getDotColors, drawStaticBackground } from "../utils/bgUtils";
+import { drawStaticBackground } from "../utils/bgUtils";
 
 const Background = () => {
   const staticCanvasRef = useRef<HTMLCanvasElement>(null);
   const shootingStarsCanvasRef = useRef<HTMLCanvasElement>(null);
   const [rotationDegrees, setRotationDegrees] = useState(0);
-  const canvasOverhang = 1.1;
-  const [style, setStyle] = useState({
-    filter: "brightness(100%)",
+  const [rotationEffect, setRotationEffect] = useState({
+    transform: `rotate(${rotationDegrees}deg)`,
+    transformOrigin: "center center",
+    transition: "tranform 1s ease",
+  });
+  const [staticStyles, setStaticStyles] = useState({
+    filter: "brightness(85%)",
     transform: "scale(1)",
-    transformOrigin: "bottom right",
+    transformOrigin: "center center",
     transition: "transform 1s ease, filter 1s ease",
   });
 
+  const setupCanvases = () => {
+    const staticCanvas = staticCanvasRef.current;
+    const shootingStarsCanvas = shootingStarsCanvasRef.current;
+    if (staticCanvas && shootingStarsCanvas) {
+      setCanvasSize(staticCanvas);
+      setCanvasSize(shootingStarsCanvas);
+
+      // initial drawing: static canvas
+      const context = staticCanvas.getContext("2d");
+      if (context) {
+        drawStaticBackground(context, staticCanvas.width, staticCanvas.height);
+      }
+
+      animateShootingStars(shootingStarsCanvas);
+    }
+  };
+
   useEffect(() => {
-    const canvas = staticCanvasRef.current;
-    const context = canvas?.getContext("2d");
-    if (!canvas || !context) return;
+    // on initial load
+    setupCanvases();
 
-    // set initial canvas size, draw static background
-    canvas.width = window.innerWidth * canvasOverhang;
-    canvas.height = window.innerHeight * canvasOverhang;
-    drawStaticBackground(context, canvas.width, canvas.height);
-
-    // handle resize
-    const onResize = () => {
-      canvas.width = window.innerWidth * canvasOverhang;
-      canvas.height = window.innerHeight * canvasOverhang;
-      drawStaticBackground(context, canvas.width, canvas.height);
+    // on resize
+    const handleResize = () => {
+      setupCanvases();
     };
-    window.addEventListener("resize", onResize);
 
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener("resize", onResize);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
-  useEffect(() => {
-    const shootingStarsCanvas = shootingStarsCanvasRef.current;
-    const shootingStarsContext = shootingStarsCanvas?.getContext("2d");
-    if (!shootingStarsCanvas || !shootingStarsContext) return;
+  const animateShootingStars = (canvas: HTMLCanvasElement) => {
+    const context = canvas.getContext("2d");
+    if (!context) return;
 
     let shootingStars: ShootingStar[] = [];
 
     const addShootingStar = () => {
-      const star = createShootingStar(
-        shootingStarsCanvas.width,
-        shootingStarsCanvas.height
-      );
+      const star = createShootingStar(canvas.width, canvas.height);
       shootingStars.push(star);
-      setTimeout(addShootingStar, Math.random() * 2000 + 2000); // 3.5 to 7 seconds
-      // setTimeout(addShootingStar, Math.random() * 4500 + 3500); // 3.5 to 7 seconds
+      setTimeout(addShootingStar, Math.random() * 2000 + 2000);
     };
 
-    const animateStars = () => {
-      shootingStarsContext.clearRect(
-        0,
-        0,
-        shootingStarsCanvas.width,
-        shootingStarsCanvas.height
-      );
+    const animateShootingStars = () => {
+      context.clearRect(0, 0, canvas.width, canvas.height);
 
       shootingStars.forEach((star, index) => {
         if (
           star.x < 0 ||
-          star.x > shootingStarsCanvas.width ||
+          star.x > canvas.width ||
           star.y < 0 ||
-          star.y > shootingStarsCanvas.height
+          star.y > canvas.height
         ) {
           shootingStars.splice(index, 1);
         } else {
-          animateShootingStar(star, shootingStarsContext);
+          animateShootingStar(star, context);
         }
       });
-
-      requestAnimationFrame(animateStars);
+      requestAnimationFrame(animateShootingStars);
     };
 
     addShootingStar();
-    animateStars();
-  }, []);
+    animateShootingStars();
+  };
 
   useEffect(() => {
-    const rotationSpeed = 0.005;
-    const rotationDirection =
-      Math.random() < 0.5 ? -rotationSpeed : rotationSpeed;
     let frameId: number;
+    const rotationSpeed = 0.001;
 
     const updateRotation = () => {
-      setRotationDegrees(
-        (prevDegrees) => (prevDegrees + rotationDirection + 360) % 360
-      );
+      setRotationDegrees((prev) => (prev + rotationSpeed) % 360);
       frameId = requestAnimationFrame(updateRotation);
     };
 
     updateRotation();
 
-    return () => {
-      cancelAnimationFrame(frameId);
-    };
+    return () => cancelAnimationFrame(frameId);
   }, []);
+
+  useEffect(() => {
+    setRotationEffect((prev) => ({
+      ...prev,
+      transform: `rotate(${rotationDegrees}deg)`,
+    }));
+  }, [rotationDegrees]);
 
   useEffect(() => {
     let frameId: number;
@@ -132,9 +134,9 @@ const Background = () => {
       const blur = Math.abs(Math.sin(time)) * intervalBlur; // blur: 0px-2px
       const saturation = 100 + Math.sin(time) * intervalSaturation; // saturation: 100%-200%
 
-      setStyle({
+      setStaticStyles({
         filter: `brightness(${brightness}%) hue-rotate(${hueRotation}deg) blur(${blur}px) saturate(${saturation}%)`,
-        transform: `rotate(${rotationDegrees}deg) scale(${scale})`,
+        transform: `scale(${scale})`,
         transformOrigin: "center center",
         transition: "transform 1s ease, filter 1s ease",
       });
@@ -150,13 +152,16 @@ const Background = () => {
         cancelAnimationFrame(frameId);
       };
     }
-  }, [rotationDegrees]);
+  }, []);
 
   return (
-    <div className={styles["bg-container"]}>
+    <div
+      className={styles["bg-container"]}
+      style={rotationEffect}
+    >
       {/* static background */}
       <canvas
-        style={style}
+        style={staticStyles}
         ref={staticCanvasRef}
       ></canvas>
       {/* shooting stars */}

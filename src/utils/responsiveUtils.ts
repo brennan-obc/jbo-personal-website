@@ -1,3 +1,20 @@
+export const setCanvasSize = (canvas: HTMLCanvasElement) => {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  // calculate diagonal
+  const diagonal = Math.sqrt(width * width + height * height);
+
+  // set canvas dimensions
+  canvas.width = diagonal;
+  canvas.height = diagonal;
+
+  // center canvas
+  canvas.style.position = "absolute";
+  canvas.style.left = `${(width - diagonal) / 2}px`;
+  canvas.style.top = `${(height - diagonal) / 2}px`;
+};
+
 export const adjustImageSizeForDevice = (): number => {
   const screenWidth = window.innerWidth;
   if (screenWidth <= 320) {
