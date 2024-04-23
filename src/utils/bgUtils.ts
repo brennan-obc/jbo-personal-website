@@ -50,6 +50,48 @@ export const drawStaticBackground = (
   width: number,
   height: number
 ) => {
+  // create background gradient
+  const innerX = width / 2; // center X
+  const innerY = height / 2; // center Y
+  const innerRadius = 0; // starting circle radius
+  const outerRadius = Math.sqrt(width * width + height * height) / 2; // half diagonal
+
+  // define gradient colors (`--color-cool-black-#` or `--color-near-black-#`)
+  const colorStopDarker = getComputedStyle(
+    document.documentElement
+  ).getPropertyValue("--color-cool-black-1");
+  const colorStopDark = getComputedStyle(
+    document.documentElement
+  ).getPropertyValue("--color-cool-black-2");
+  const colorStopMid = getComputedStyle(
+    document.documentElement
+  ).getPropertyValue("--color-cool-black-3");
+  const colorStopLight = getComputedStyle(
+    document.documentElement
+  ).getPropertyValue("--color-cool-black-4");
+  const colorStopLighter = getComputedStyle(
+    document.documentElement
+  ).getPropertyValue("--color-cool-black-5");
+
+  const gradient = context.createRadialGradient(
+    innerX,
+    innerY,
+    innerRadius,
+    innerX,
+    innerY,
+    outerRadius
+  );
+
+  // gradient color stops
+  gradient.addColorStop(0, colorStopDarker);
+  gradient.addColorStop(0.25, colorStopDark);
+  gradient.addColorStop(0.5, colorStopMid);
+  gradient.addColorStop(0.75, colorStopLight);
+  gradient.addColorStop(1, colorStopLighter);
+
+  context.fillStyle = gradient;
+  context.fillRect(0, 0, width, height);
+
   const shadowColors = getShadowColors();
   const starColors = getDotColors();
   const starCount = 1000;
@@ -89,27 +131,5 @@ export const drawStaticBackground = (
     context.arc(x, y, starSize, 0, Math.PI * 2);
     context.fillStyle = starColor;
     context.fill();
-  }
-};
-
-// handle window resize
-export const handleResize = (
-  canvasRef: React.RefObject<HTMLCanvasElement>,
-  draw: () => void
-) => {
-  const canvas = canvasRef.current;
-  if (!canvas) return;
-
-  // store current dimensions to compare against new dimensions
-  const currentWidth = canvas.width;
-  const currentHeight = canvas.height;
-
-  // update canvas size
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  // only redraw if dimensions have changed
-  if (canvas.width !== currentWidth || canvas.height !== currentHeight) {
-    draw();
   }
 };

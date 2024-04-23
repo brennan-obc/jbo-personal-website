@@ -15,9 +15,8 @@ function App() {
     <>
       <Background />
       <BrowserRouter>
-        <div className='relative min-h-screen'>
-          <div className='relative z-10'>
-            <Routes>
+        <div>
+          {/* <Routes>
               <Route
                 path='/'
                 element={<Home />}
@@ -34,8 +33,7 @@ function App() {
                 path='/projects'
                 element={<Projects />}
               />
-            </Routes>
-          </div>
+            </Routes> */}
         </div>
       </BrowserRouter>
     </>

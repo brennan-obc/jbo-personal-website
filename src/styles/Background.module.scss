@@ -2,12 +2,16 @@
 
 .bg-container {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+  background-color: var(--color-dark-main);
   // width: 100%;
   // height: 100%;
-  background-color: var(--color-dark-main);
+}
+.bg-container canvas {
+  position: absolute;
+  // top: 0;
+  // left: 0;
+  // width: 100%;
+  // height: 100%;
 }
 
 .bg-container__dot {
@@ -16,8 +20,6 @@
   background-color: #000;
 }
 
-// .bg-container__button--freeze {
-// }
-
-// .bg-container__button--fall {
-// }
+canvas {
+  display: block;
+}
