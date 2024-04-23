@@ -1,6 +1,5 @@
 /* eslint-disable prefer-const */
-
-import { getShadowColors } from "./bgUtils";
+// import { getShadowColors } from "./bgUtils";
 
 export interface ShootingStar {
   x: number;
@@ -19,10 +18,9 @@ export const createShootingStar = (
 ): ShootingStar => {
   const x = Math.random() * width;
   const y = Math.random() * height;
-  const size = Math.random() * 0.2 + 0.2;
+  const size = Math.random() * 1.5 + 1;
   const angle = Math.random() * Math.PI * 2;
-  const speed = Math.random() * 2.25 + 0.5;
-  // const speed = Math.random() * 0.05 + 0.05; //! slowed down for examination
+  const speed = Math.random() * 12 + 5;
   const vx = Math.cos(angle) * speed;
   const vy = Math.sin(angle) * speed;
   const colors = [
@@ -46,8 +44,8 @@ export const animateShootingStar = (
   star: ShootingStar,
   context: CanvasRenderingContext2D
 ) => {
-  context.globalCompositeOperation = "source-over";
-  context.globalAlpha = 1.0; // Reset opacity to full
+  // context.globalCompositeOperation = "source-over";
+  // context.globalAlpha = 1.0; // Reset opacity to full
 
   // update previous position
   star.prevX = star.x;

@@ -15,40 +15,34 @@ const Background = () => {
   const staticCanvasRef = useRef<HTMLCanvasElement>(null);
   const shootingStarsCanvasRef = useRef<HTMLCanvasElement>(null);
   const [rotationDegrees, setRotationDegrees] = useState(0);
-  const [rotationEffect, setRotationEffect] = useState({
-    transform: `rotate(${rotationDegrees}deg)`,
-    transformOrigin: "center center",
-    transition: "tranform 1s ease",
-  });
+
   const [staticStyles, setStaticStyles] = useState({
-    filter: "brightness(85%)",
+    filter: "brightness(100%)",
     transform: "scale(1)",
     transformOrigin: "center center",
     transition: "transform 1s ease, filter 1s ease",
   });
 
-  const setupCanvases = () => {
-    const staticCanvas = staticCanvasRef.current;
-    const shootingStarsCanvas = shootingStarsCanvasRef.current;
-    if (staticCanvas && shootingStarsCanvas) {
-      setCanvasSize(staticCanvas);
-      setCanvasSize(shootingStarsCanvas);
-
-      // initial drawing: static canvas
-      const context = staticCanvas.getContext("2d");
-      if (context) {
-        drawStaticBackground(context, staticCanvas.width, staticCanvas.height);
-      }
-
-      animateShootingStars(shootingStarsCanvas);
-    }
-  };
-
   useEffect(() => {
-    // on initial load
-    setupCanvases();
+    const setupCanvases = () => {
+      const staticCanvas = staticCanvasRef.current;
+      const shootingStarsCanvas = shootingStarsCanvasRef.current;
+      if (staticCanvas && shootingStarsCanvas) {
+        setCanvasSize(staticCanvas);
+        setCanvasSize(shootingStarsCanvas);
+        const context = staticCanvas.getContext("2d");
+        if (context) {
+          drawStaticBackground(
+            context,
+            staticCanvas.width,
+            staticCanvas.height
+          );
+        }
+        initShootingStars(shootingStarsCanvas);
+      }
+    };
 
-    // on resize
+    setupCanvases();
     const handleResize = () => {
       setupCanvases();
     };
@@ -59,19 +53,48 @@ const Background = () => {
     };
   }, []);
 
-  const animateShootingStars = (canvas: HTMLCanvasElement) => {
+  useEffect(() => {
+    const updateCanvasStyles = () => {
+      const rotationStyle = {
+        transform: `rotate(${rotationDegrees}deg)`,
+        transformOrigin: "center center",
+        transition: "tranform 1s ease",
+      };
+      if (staticCanvasRef.current) {
+        Object.assign(staticCanvasRef.current.style, rotationStyle);
+      }
+      if (shootingStarsCanvasRef.current) {
+        Object.assign(shootingStarsCanvasRef.current.style, rotationStyle);
+      }
+    };
+
+    updateCanvasStyles();
+  }, [rotationDegrees, staticStyles]);
+
+  useEffect(() => {
+    const initRotation = () => {
+      const rotationSpeed = 0.0025;
+      const upcomingDegrees = (rotationDegrees + rotationSpeed) % 360;
+      setRotationDegrees(upcomingDegrees);
+    };
+
+    const frameId: number = requestAnimationFrame(initRotation);
+    return () => cancelAnimationFrame(frameId);
+  }, [rotationDegrees]);
+
+  const initShootingStars = (canvas: HTMLCanvasElement) => {
     const context = canvas.getContext("2d");
     if (!context) return;
 
     let shootingStars: ShootingStar[] = [];
 
-    const addShootingStar = () => {
+    const addShootingStars = () => {
       const star = createShootingStar(canvas.width, canvas.height);
       shootingStars.push(star);
-      setTimeout(addShootingStar, Math.random() * 2000 + 2000);
+      setTimeout(addShootingStars, Math.random() * 2000 + 2000);
     };
 
-    const animateShootingStars = () => {
+    const runShootingStars = () => {
       context.clearRect(0, 0, canvas.width, canvas.height);
 
       shootingStars.forEach((star, index) => {
@@ -86,51 +109,29 @@ const Background = () => {
           animateShootingStar(star, context);
         }
       });
-      requestAnimationFrame(animateShootingStars);
+      requestAnimationFrame(runShootingStars);
     };
 
-    addShootingStar();
-    animateShootingStars();
+    addShootingStars();
+    runShootingStars();
   };
-
-  useEffect(() => {
-    let frameId: number;
-    const rotationSpeed = 0.1;
-
-    const updateRotation = () => {
-      setRotationDegrees((prev) => (prev + rotationSpeed) % 360);
-      frameId = requestAnimationFrame(updateRotation);
-    };
-
-    updateRotation();
-
-    return () => cancelAnimationFrame(frameId);
-  }, []);
-
-  useEffect(() => {
-    setRotationEffect({
-      transform: `rotate(${rotationDegrees}deg)`,
-      transformOrigin: "center center",
-      transition: "transform 1s ease",
-    });
-  }, [rotationDegrees]);
 
   useEffect(() => {
     let frameId: number;
 
     const animateCanvasStyle = () => {
       // calculate random intervals for each effect
-      const intervalScale = Math.random() * 0.1 + 0.5;
-      const intervalBrightness = Math.random() * 1 + 0.9;
-      const intervalHue = Math.random() * 360;
-      const intervalBlur = Math.random() * 2;
-      const intervalSaturation = Math.random() * 100 + 100;
+      const intervalScale = Math.random() * 0.04 + 0.3;
+      const intervalBrightness = Math.random() * 0.2 + 0.1;
+      const intervalHue = Math.random() * 10 + 5;
+      const intervalBlur = Math.random() * 0.4 + 0.1;
+      const intervalSaturation = Math.random() * 20 + 10;
 
-      const time = Date.now() * 0.002; // base time for fluctuation
+      const time = Date.now() * 0.00005; // base time for fluctuation
 
       // dynamic style oscillation calculation
-      const brightness = 100 + Math.sin(time * intervalBrightness) * 50; // brightness: 50%-150%
-      const scale = 1 + Math.sin(time * intervalScale) * 0.015; // scale: 0.95-1.05
+      const brightness = 100 + Math.sin(time * intervalBrightness) * 5; // brightness: 50%-150%
+      const scale = 1 + Math.sin(time * intervalScale) * 0.005; // scale: 0.95-1.05
       const hueRotation = Math.sin(time) * intervalHue; // hue rotation: 0deg-360deg
       const blur = Math.abs(Math.sin(time)) * intervalBlur; // blur: 0px-2px
       const saturation = 100 + Math.sin(time) * intervalSaturation; // saturation: 100%-200%
@@ -145,27 +146,22 @@ const Background = () => {
       frameId = requestAnimationFrame(animateCanvasStyle);
     };
 
-    const staticCanvas = staticCanvasRef.current;
-    if (staticCanvas) {
-      animateCanvasStyle();
+    // const staticCanvas = staticCanvasRef.current;
+    // if (staticCanvas) {
+    animateCanvasStyle();
 
-      return () => {
-        cancelAnimationFrame(frameId);
-      };
-    }
+    return () => {
+      cancelAnimationFrame(frameId);
+    };
+    // }
   }, []);
 
   return (
-    <div
-      className={styles["bg-container"]}
-      style={rotationEffect}
-    >
-      {/* static background */}
+    <div className={styles["bg-container"]}>
       <canvas
         style={staticStyles}
         ref={staticCanvasRef}
       ></canvas>
-      {/* shooting stars */}
       <canvas ref={shootingStarsCanvasRef}></canvas>{" "}
     </div>
   );

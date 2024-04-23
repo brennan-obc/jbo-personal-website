@@ -92,12 +92,6 @@ export const drawStaticBackground = (
   context.fillStyle = gradient;
   context.fillRect(0, 0, width, height);
 
-  // crosshairs at center point
-  context.fillStyle = "red";
-  context.beginPath();
-  context.arc(innerX, innerY, 10, 0, 2 * Math.PI);
-  context.fill();
-
   const shadowColors = getShadowColors();
   const starColors = getDotColors();
   const starCount = 1000;
