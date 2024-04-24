@@ -6,6 +6,7 @@ import { BrowserRouter /* , Route, Routes */ } from "react-router-dom";
 // import Home from "./pages/Home";
 // import Projects from "./pages/Projects";
 import Background from "./components/Background";
+import Navbar from "./components/Navbar";
 
 import "./styles/App.css";
 
@@ -15,6 +16,7 @@ function App() {
   return (
     <div>
       <Background />
+      {/* <Navbar /> */}
       <BrowserRouter>
         <div>
           {/* <Routes>
