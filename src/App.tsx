@@ -1,18 +1,19 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { useState } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import Home from "./pages/Home";
-import Projects from "./pages/Projects";
+// import { useState, useRef } from "react";
+import { BrowserRouter /* , Route, Routes */ } from "react-router-dom";
+// import About from "./pages/About";
+// import Contact from "./pages/Contact";
+// import Home from "./pages/Home";
+// import Projects from "./pages/Projects";
 import Background from "./components/Background";
+
 import "./styles/App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
+  // const canvasRef = useRef<HTMLCanvasElement>(null);
 
   return (
-    <>
+    <div>
       <Background />
       <BrowserRouter>
         <div>
@@ -36,7 +37,7 @@ function App() {
             </Routes> */}
         </div>
       </BrowserRouter>
-    </>
+    </div>
   );
 }
 
