@@ -50,7 +50,6 @@ const Navbar = () => {
           className={({ isActive }) =>
             isActive ? `${styles.navItem} ${styles.active}` : styles.navItem
           }
-          // Set the img src inside the scope where isActive is defined
           children={({ isActive }) => (
             <>
               <img
@@ -58,7 +57,7 @@ const Navbar = () => {
                 alt={item.label}
                 style={{ width: "75px", height: "75px" }}
               />
-              {item.label}
+              <span>{item.label}</span>
             </>
           )}
         />
