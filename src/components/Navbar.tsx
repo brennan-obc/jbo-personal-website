@@ -1,48 +1,67 @@
-import React from "react";
 import { NavLink } from "react-router-dom";
-import "../styles/Navbar.scss";
+import styles from "../styles/Navbar.module.scss";
+
+import homeSvg from "../assets/navbar/moonPhases/home.svg";
+import aboutSvg from "../assets/navbar/moonPhases/about.svg";
+import projectsSvg from "../assets/navbar/moonPhases/projects.svg";
+import contactSvg from "../assets/navbar/moonPhases/contact.svg";
+import resumeSvg from "../assets/navbar/moonPhases/resume.svg";
 
 const Navbar = () => {
   const navItems = [
     {
-      label: "Home",
-      path: "/",
-      svg: "src\\assets\\navbar\\150px\\multi\\sm-phase_6.png",
-    },
-    {
       label: "About",
       path: "/about",
-      svg: "src\\assets\\navbar\\150px\\multi\\sm-phase_4.png",
+      svg: aboutSvg,
+      activeSvg: aboutSvg,
     },
     {
       label: "Projects",
       path: "/projects",
-      svg: "src\\assets\\navbar\\150px\\multi\\sm-phase_2.png",
+      svg: projectsSvg,
+      activeSvg: projectsSvg,
+    },
+    {
+      label: "Home",
+      path: "/",
+      svg: homeSvg,
+      activeSvg: homeSvg,
+    },
+    {
+      label: "Resume",
+      path: "/resume",
+      svg: resumeSvg,
+      activeSvg: resumeSvg,
     },
     {
       label: "Contact",
       path: "/contact",
-      svg: "src\\assets\\navbar\\150px\\multi\\sm-phase_1.png",
+      svg: contactSvg,
+      activeSvg: contactSvg,
     },
   ];
 
   return (
-    <nav className='navbar'>
+    <nav className={styles.navbar}>
       {navItems.map((item) => (
         <NavLink
           key={item.label}
           to={item.path}
           className={({ isActive }) =>
-            isActive ? "nav-item active" : "nav-item"
+            isActive ? `${styles.navItem} ${styles.active}` : styles.navItem
           }
-          style={({ isActive }) => ({
-            backgroundImage: `url(${
-              isActive ? item.svg.replace(".svg", "-active.svg") : item.svg
-            })`,
-          })}
-        >
-          {item.label}
-        </NavLink>
+          // Set the img src inside the scope where isActive is defined
+          children={({ isActive }) => (
+            <>
+              <img
+                src={isActive ? item.activeSvg : item.svg}
+                alt={item.label}
+                style={{ width: "75px", height: "75px" }}
+              />
+              {item.label}
+            </>
+          )}
+        />
       ))}
     </nav>
   );

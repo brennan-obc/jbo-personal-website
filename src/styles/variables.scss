@@ -1,4 +1,13 @@
 :root {
+  //- utility
+  --color-light-text: rgba(245, 235, 250, 1);
+  --color-dark-text: rgba(15, 25, 45, 1);
+
+  //- components
+  // Navbar
+  --color-navbar-bg: rgba(60, 60, 60, 0.4);
+
+  //- palettes
   // general (dark & light modes)
   --color-dark-main: rgba(0, 0, 0, 1);
   --color-dark-accent: rgba(22, 22, 24, 1);
