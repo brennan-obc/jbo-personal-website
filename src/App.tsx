@@ -7,8 +7,10 @@ import Home from "./pages/Home";
 import Projects from "./pages/Projects";
 import Background from "./components/Background";
 import Navbar from "./components/Navbar";
+import "./styles/global.scss";
+import "./styles/variables.scss";
+import "./styles/App.scss";
 
-import "./styles/App.css";
 
 function App() {
   // const canvasRef = useRef<HTMLCanvasElement>(null);

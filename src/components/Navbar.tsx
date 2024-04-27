@@ -1,40 +1,42 @@
 import { NavLink } from "react-router-dom";
 import styles from "../styles/Navbar.module.scss";
+import "../styles/global.scss";
+import "../styles/variables.scss";
 
-import homeSvg from "../assets/navbar/moonPhases/home.svg";
-import aboutSvg from "../assets/navbar/moonPhases/about.svg";
-import projectsSvg from "../assets/navbar/moonPhases/projects.svg";
-import contactSvg from "../assets/navbar/moonPhases/contact.svg";
-import resumeSvg from "../assets/navbar/moonPhases/resume.svg";
+import homeSvg from "../assets/navbar/moonPhasesMulti/homeMulti.svg";
+import aboutSvg from "../assets/navbar/moonPhasesMulti/aboutMulti.svg";
+import projectsSvg from "../assets/navbar/moonPhasesMulti/projectsMulti.svg";
+import contactSvg from "../assets/navbar/moonPhasesMulti/contactMulti.svg";
+import resumeSvg from "../assets/navbar/moonPhasesMulti/resumeMulti.svg";
 
 const Navbar = () => {
   const navItems = [
     {
-      label: "About",
+      label: "ABOUT",
       path: "/about",
       svg: aboutSvg,
       activeSvg: aboutSvg,
     },
     {
-      label: "Projects",
+      label: "PROJECTS",
       path: "/projects",
       svg: projectsSvg,
       activeSvg: projectsSvg,
     },
     {
-      label: "Home",
+      label: "HOME",
       path: "/",
       svg: homeSvg,
       activeSvg: homeSvg,
     },
     {
-      label: "Resume",
+      label: "RESUME",
       path: "/resume",
       svg: resumeSvg,
       activeSvg: resumeSvg,
     },
     {
-      label: "Contact",
+      label: "CONTACT",
       path: "/contact",
       svg: contactSvg,
       activeSvg: contactSvg,
