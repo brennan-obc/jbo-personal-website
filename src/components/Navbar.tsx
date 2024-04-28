@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import styles from "../styles/Navbar.module.scss";
 import "../styles/global.scss";
@@ -43,6 +44,8 @@ const Navbar = () => {
     },
   ];
 
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+
   return (
     <nav className={styles.navbar}>
       {navItems.map((item) => (
@@ -50,19 +53,22 @@ const Navbar = () => {
           key={item.label}
           to={item.path}
           className={({ isActive }) =>
-            isActive ? `${styles.navItem} ${styles.active}` : styles.navItem
+            `${styles.navItem} ${isActive ? styles.active : ""} ${
+              hoveredItem && hoveredItem !== item.label
+                ? styles.neighborHovered
+                : ""
+            }`
           }
-          children={({ isActive }) => (
-            <>
-              <img
-                src={isActive ? item.activeSvg : item.svg}
-                alt={item.label}
-                style={{ width: "75px", height: "75px" }}
-              />
-              <span>{item.label}</span>
-            </>
-          )}
-        />
+          onMouseEnter={() => setHoveredItem(item.label)}
+          onMouseLeave={() => setHoveredItem(null)}
+        >
+          <img
+            src={item.svg}
+            alt={item.label}
+            style={{ width: "105px", height: "105px" }}
+          />
+          <span>{item.label}</span>
+        </NavLink>
       ))}
     </nav>
   );
