@@ -7,13 +7,12 @@ import Home from "./pages/Home";
 import Projects from "./pages/Projects";
 import Background from "./components/Background";
 import Navbar from "./components/Navbar";
+import Resume from "./pages/Resume";
 import "./styles/global.scss";
 import "./styles/variables.scss";
 import "./styles/App.scss";
 
-
 function App() {
-  // const canvasRef = useRef<HTMLCanvasElement>(null);
 
   return (
     <div>
@@ -37,6 +36,10 @@ function App() {
             <Route
               path='/projects'
               element={<Projects />}
+            />
+            <Route
+              path='/resume'
+              element={<Resume />}
             />
           </Routes>
         </div>

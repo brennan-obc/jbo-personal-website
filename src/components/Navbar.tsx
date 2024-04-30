@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import styles from "../styles/Navbar.module.scss";
+import styles from "../styles/modules/Navbar.module.scss";
 import "../styles/global.scss";
 import "../styles/variables.scss";
 
-import homeSvg from "../assets/navbar/moonPhasesMulti/homeMulti.svg";
-import aboutSvg from "../assets/navbar/moonPhasesMulti/aboutMulti.svg";
-import projectsSvg from "../assets/navbar/moonPhasesMulti/projectsMulti.svg";
-import contactSvg from "../assets/navbar/moonPhasesMulti/contactMulti.svg";
-import resumeSvg from "../assets/navbar/moonPhasesMulti/resumeMulti.svg";
+const homeSvg = "../../public/assets/navbar/moonPhasesMulti/homeMulti.svg";
+const aboutSvg = "../../public/assets/navbar/moonPhasesMulti/aboutMulti.svg";
+const projectsSvg =
+  "../../public/assets/navbar/moonPhasesMulti/projectsMulti.svg";
+const contactSvg =
+  "../../public/assets/navbar/moonPhasesMulti/contactMulti.svg";
+const resumeSvg = "../../public/assets/navbar/moonPhasesMulti/resumeMulti.svg";
 
 const Navbar = () => {
   const navItems = [

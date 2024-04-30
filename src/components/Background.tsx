@@ -1,6 +1,6 @@
 /* eslint-disable prefer-const */
 import { useRef, useEffect, useState } from "react";
-import styles from "../styles/Background.module.scss";
+import styles from "../styles/modules/Background.module.scss";
 import "../styles/global.scss";
 import "../styles/variables.scss";
 import { setCanvasSize } from "../utils/responsiveUtils";
