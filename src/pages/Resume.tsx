@@ -8,26 +8,40 @@ const Resume = () => {
   const resumePDF = "/media/documents/jboc_resume-pdf.pdf";
   const resumeDOCX = "/media/documents/jboc_resume-doc.docx";
 
+  const iconPDF = "assets/icons/pdf-outline.svg";
+  const iconDOCX = "assets/icons/docx-outline.svg";
+
+  //? why is the PDF loading as '2_page_resume' when opened in separate tab?
+
   return (
     <div className='resumeContainer'>
-      <div className='buttonContainer'>
-        <a
-          href={resumePDF}
-          download='Resume.pdf'
-        >
-          <button>Download PDF</button>
-        </a>
-        <a
-          href={resumeDOCX}
-          download='Resume.docx'
-        >
-          <button>Download DOCX</button>
-        </a>
+      <div className='resumeImgWrapper'>
+        <FileDisplay
+          src={resumeImage}
+          alt='Resume Image'
+          pdf={resumePDF}
+        />
+        <div className='buttonContainer'>
+          <a
+            href={resumePDF}
+            download='Resume.pdf'
+          >
+            <img
+              src={iconPDF}
+              alt='Download PDF'
+            />
+          </a>
+          <a
+            href={resumeDOCX}
+            download='Resume.docx'
+          >
+            <img
+              src={iconDOCX}
+              alt='Download DOCX'
+            />
+          </a>
+        </div>
       </div>
-      <FileDisplay
-        src={resumeImage}
-        alt='Resume Image'
-      />
     </div>
   );
 };

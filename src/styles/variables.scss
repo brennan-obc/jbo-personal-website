@@ -1,5 +1,9 @@
 :root {
   //* dimensions
+  // general
+  --dim-icon-WH: calc((2.5vh + 2.5vw) / 2);
+
+  // navbar
   --dim-px-navbar-padding: 20px;
   --dim-px-navItem-WH: calc((10vh + 10vw) / 2);
   --dim-px-navItem-margin-RL: 25px;
@@ -14,6 +18,7 @@
   --color-light-shadow: rgba(240, 223, 253, 0.4);
   --color-dark-shadow: rgba(45, 25, 55, 0.4);
   --color-button-bg: rgba(222, 220, 247, 0.938);
+  --color-link-text: rgb(28, 68, 148);
 
   //- components
 

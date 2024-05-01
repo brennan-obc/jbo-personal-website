@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-// import { useState, useRef } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -13,25 +12,11 @@ import "./styles/variables.scss";
 import "./styles/App.scss";
 
 function App() {
-  // const testImage = "/assets/test_image.jpg";
-  // const testImage = "/media/documents/jboc_resume-img.png";
-
   return (
     <div className='pageContainer'>
       <BrowserRouter>
         <Background />
         <Navbar />
-        {/* <img
-          src={testImage}
-          alt='Test Image'
-          style={{
-            width: "100%",
-            height: "auto",
-            position: "absolute",
-            top: 0,
-            zIndex: 999,
-          }}
-        /> */}
         <div>
           <Routes>
             <Route
