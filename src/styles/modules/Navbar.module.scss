@@ -1,14 +1,6 @@
 @import "../global.scss";
 @import "../variables.scss";
 
-/* 
---font-averia
---font-contrail
---font-aldrich
---font-balsamiq
---font-bungee
-*/
-
 .navbar {
   display: flex;
   justify-content: center;
@@ -27,18 +19,22 @@
     text-decoration: none;
     background-size: contain;
     background-repeat: no-repeat;
-    width: 100px;
-    height: 100px;
+
     margin-right: 30px;
     transition: opacity 0.3s ease, transform 1s ease;
     transform: translateY(10px);
 
+    .navItemImg {
+      width: var(--dim-px-navItem-WH);
+      height: var(--dim-px-navItem-WH);
+    }
+
     span {
       display: block;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       text-align: center;
       opacity: 0.5;
-      letter-spacing: 1.5cap;
+      letter-spacing: 2.75cap;
       transform: translateY(-15px);
       transition: transform 0.9s ease, opacity 1s ease;
     }
@@ -52,7 +48,7 @@
     }
 
     &:hover {
-      transform: scale(1.6);
+      transform: scale(1.2);
       transition: transform 1s ease, opacity 1s ease;
 
       span {

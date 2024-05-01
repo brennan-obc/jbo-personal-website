@@ -12,6 +12,8 @@ const contactSvg =
   "../../public/assets/navbar/moonPhasesMulti/contactMulti.svg";
 const resumeSvg = "../../public/assets/navbar/moonPhasesMulti/resumeMulti.svg";
 
+// ToDo: style active navItem
+
 const Navbar = () => {
   const navItems = [
     {
@@ -67,7 +69,7 @@ const Navbar = () => {
           <img
             src={item.svg}
             alt={item.label}
-            style={{ width: "105px", height: "105px" }}
+            className={styles.navItemImg}
           />
           <span>{item.label}</span>
         </NavLink>

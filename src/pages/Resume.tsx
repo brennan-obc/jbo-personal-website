@@ -1,5 +1,7 @@
 import FileDisplay from "../components/FileDisplay";
-import "../styles/modules/Resume.module.scss";
+import "../styles/modules/Resume.scss";
+import "../styles/global.scss";
+import "../styles/variables.scss";
 
 const Resume = () => {
   const resumeImage = "/media/documents/jboc_resume-img.png";

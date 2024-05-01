@@ -1,4 +1,7 @@
 import React /* , { useState } */ from "react";
+import "../styles/modules/Resume.scss";
+import "../styles/global.scss";
+import "../styles/variables.scss";
 
 interface FileDisplayProps {
   src: string;
@@ -15,6 +18,7 @@ const FileDisplay: React.FC<FileDisplayProps> = ({
 }) => {
   return (
     <img
+      className='resumeImg'
       src={src}
       alt={alt}
       style={{

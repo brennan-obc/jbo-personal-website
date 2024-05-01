@@ -13,12 +13,25 @@ import "./styles/variables.scss";
 import "./styles/App.scss";
 
 function App() {
+  // const testImage = "/assets/test_image.jpg";
+  // const testImage = "/media/documents/jboc_resume-img.png";
+
   return (
-    <div>
+    <div className='pageContainer'>
       <BrowserRouter>
         <Background />
         <Navbar />
-        <h1>hello </h1>
+        {/* <img
+          src={testImage}
+          alt='Test Image'
+          style={{
+            width: "100%",
+            height: "auto",
+            position: "absolute",
+            top: 0,
+            zIndex: 999,
+          }}
+        /> */}
         <div>
           <Routes>
             <Route

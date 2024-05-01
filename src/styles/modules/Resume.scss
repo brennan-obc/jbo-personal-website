@@ -1,14 +1,25 @@
 @import "../global.scss";
 @import "../variables.scss";
 
-.resume-container {
+.resumeContainer {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: var(--dim-px-navbar-total-H);
+  // height: var(--dim-px-navbar-total-H);
+  height: 100%;
+  width: 80vw;
   padding-top: 20px; // space for buttons
   z-index: 500;
+  margin: 0 auto;
+
+  img {
+    position: relative;
+    max-height: 80vh;
+    object-fit: contain;
+    z-index: 999;
+  }
 }
 
 .button-container {
@@ -28,9 +39,4 @@ button {
   &:hover {
     background-color: var(--color-light-accent);
   }
-}
-
-img {
-  max-height: 80%;
-  max-width: 100%;
 }
