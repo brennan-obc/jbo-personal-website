@@ -1,18 +1,27 @@
 :root {
+  //* dimensions
+  --dim-px-navbar-padding: 20px;
+  --dim-px-navItem-WH: 100px;
+  --dim-px-navItem-margin-RL: 25px;
+  --dim-px-navbar-total-H: calc(
+    (var(--dim-px-navbar-padding)) + (var(--dim-px-navItem-WH))
+  );
+
+  //* colors
   //- utility
   --color-light-text: rgba(245, 235, 250, 1);
   --color-dark-text: rgba(15, 25, 45, 1);
   --color-light-shadow: rgba(240, 223, 253, 0.4);
   --color-dark-shadow: rgba(45, 25, 55, 0.4);
+  --color-button-bg: rgba(222, 220, 247, 0.938);
 
-  
   //- components
+
   // Navbar
   --color-navbar-bg: rgba(60, 60, 60, 0.4);
   --color-navbar-label: rgba(206, 202, 255, 0.938);
   --color-space-blue-shadow: rgba(210, 210, 252, 0.4);
   --color-space-purple-shadow: rgba(217, 197, 255, 0.4);
-  
 
   //- palettes
   // general (dark & light modes)
@@ -30,7 +39,7 @@
   --color-ui-accent-highlight: rgba(53, 55, 56, 1);
 
   // navbar images
-  --color-navbar-about: rgb(234, 213, 224,1);
+  --color-navbar-about: rgb(234, 213, 224, 1);
   --color-navbar-projects: rgb(238, 218, 179, 1);
   --color-navbar-home: rgb(238, 223, 161, 1);
   --color-navbar-resume: rgb(244, 240, 149, 1);

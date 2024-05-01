@@ -13,12 +13,12 @@ import "./styles/variables.scss";
 import "./styles/App.scss";
 
 function App() {
-
   return (
     <div>
       <BrowserRouter>
         <Background />
         <Navbar />
+        <h1>hello </h1>
         <div>
           <Routes>
             <Route

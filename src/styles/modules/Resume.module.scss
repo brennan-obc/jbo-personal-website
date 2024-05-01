@@ -1,0 +1,36 @@
+@import "../global.scss";
+@import "../variables.scss";
+
+.resume-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: var(--dim-px-navbar-total-H);
+  padding-top: 20px; // space for buttons
+  z-index: 500;
+}
+
+.button-container {
+  margin-bottom: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  margin-right: 10px;
+  cursor: pointer;
+  background-color: var(--color-button-bg);
+  color: var(--color-dark-text);
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: var(--color-light-accent);
+  }
+}
+
+img {
+  max-height: 80%;
+  max-width: 100%;
+}
